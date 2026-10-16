@@ -1,11 +1,11 @@
 CREATE TABLE users
 (
     id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email         VARCHAR(200) NOT NULL,
-    password_hash VARCHAR(200) NOT NULL,
+    email         VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(100) NOT NULL,
     first_name    VARCHAR(100) NOT NULL,
     last_name     VARCHAR(100) NOT NULL,
-    phone         VARCHAR(20)  NOT NULL,
+    phone         VARCHAR(20),
     role          VARCHAR(20)  NOT NULL DEFAULT 'CUSTOMER',
     enabled       BOOLEAN      NOT NULL DEFAULT TRUE,
     create_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
