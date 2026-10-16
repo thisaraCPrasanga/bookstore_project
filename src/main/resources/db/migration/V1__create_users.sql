@@ -8,8 +8,8 @@ CREATE TABLE users
     phone         VARCHAR(20),
     role          VARCHAR(20)  NOT NULL DEFAULT 'CUSTOMER',
     enabled       BOOLEAN      NOT NULL DEFAULT TRUE,
-    create_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    update_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    created_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    updated_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
 
     CONSTRAINT uk_users_email UNIQUE (email),
     CONSTRAINT ck_users_role CHECK ( role IN ('CUSTOMER', 'ADMIN'))
