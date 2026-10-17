@@ -36,12 +36,16 @@ public class User {
     private Instant updatedAt;
 
     public User(String email,String passwordHash,String firstName,String lastName){
-        this.email = email.trim().toLowerCase(Locale.ROOT);
+        this.email = normalizeEmail(email);
         this.passwordHash=passwordHash;
-        this.firstName=firstName;
-        this.lastName=lastName;
+        this.firstName=firstName.trim();
+        this.lastName=lastName.trim();
         this.role=Role.CUSTOMER;
         this.enabled=true;
+    }
+
+    static String normalizeEmail(String email){
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     public void changeRole(Role newRole){
