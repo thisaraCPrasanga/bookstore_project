@@ -1,6 +1,7 @@
 package com.thisara.bookstore.user.internal;
 
 import com.thisara.bookstore.shared.ConflictException;
+import com.thisara.bookstore.shared.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties;
@@ -64,5 +65,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         problemDetail.setProperty("errors",errors);
         return ResponseEntity.status(statusCode).body(problemDetail);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage()
+        );
     }
 }

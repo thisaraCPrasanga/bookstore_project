@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/users/login").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex->ex
