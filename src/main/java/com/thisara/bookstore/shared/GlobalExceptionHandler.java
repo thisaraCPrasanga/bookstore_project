@@ -1,12 +1,10 @@
-package com.thisara.bookstore.user.internal;
+package com.thisara.bookstore.shared;
 
-import com.thisara.bookstore.shared.ConflictException;
-import com.thisara.bookstore.shared.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         log.warn("A Database rule refused a change", ex);
         return ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.CONFLICT,
                 "An error occurred while processing the request"
         );
     }
@@ -74,4 +72,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage()
         );
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ProblemDetail handleNotFoundException(NotFoundException ex){
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDeniedException(AccessDeniedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+                "You do not have permission to do this");
+    }
+
+
+
 }

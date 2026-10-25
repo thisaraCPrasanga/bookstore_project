@@ -3,10 +3,14 @@ package com.thisara.bookstore.user.internal;
 import com.thisara.bookstore.security.JwtUtil;
 import com.thisara.bookstore.shared.ConflictException;
 import com.thisara.bookstore.shared.InvalidCredentialsException;
+import com.thisara.bookstore.shared.NotFoundException;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -67,6 +71,27 @@ public class UserService {
                 user.getLastName(),
                 user.getRole()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> getAll(){
+        return userRepository.findAll(Sort.by("id"))
+                .stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    public UserResponse changeRole (Long userId,Role newRole,Long currentUserId){
+        if (userId.equals(currentUserId)){
+            throw new ConflictException("You cannot change the your own role");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new NotFoundException("User Not Found"));
+
+        user.changeRole(newRole);
+        return UserResponse.from(user);
     }
 
 }
