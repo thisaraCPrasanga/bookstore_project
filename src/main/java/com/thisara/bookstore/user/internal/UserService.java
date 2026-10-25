@@ -94,4 +94,13 @@ public class UserService {
         return UserResponse.from(user);
     }
 
+
+    @Transactional(readOnly = true)
+    public UserResponse getById(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("User not Found"));
+        return UserResponse.from(user);
+    }
+
+
 }

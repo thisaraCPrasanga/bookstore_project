@@ -49,5 +49,10 @@ public class UserController {
         return ResponseEntity.ok(userService.changeRole(id,changeRoleRequest.role(),authenticatedUser.id()));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal AuthenticatedUser currentUser){
+        return ResponseEntity.ok(userService.getById(currentUser.id()));
+
+    }
 
 }
