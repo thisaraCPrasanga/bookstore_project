@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -87,6 +88,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "You do not have permission to do this");
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ProblemDetail handleBadRequestException(BadRequestException ex) {
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
+    }
 
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLockingFailureException(OptimisticLockingFailureException ex) {
+        log.info("Optimistic locking conflict: {}", ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                "This item was changed by someone else. Reload it and try again."
+        );
+    }
 
 }
