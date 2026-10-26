@@ -2,13 +2,17 @@ package com.thisara.bookstore.catalog.internal;
 
 import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.catalog.Genre;
+import com.thisara.bookstore.shared.BadRequestException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Objects;
 
 @Entity
 @Table(name = "books")
@@ -20,7 +24,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 13)
+    @Column(nullable = false, length = 13)
     private String isbn;
 
     @Column(nullable = false)
@@ -30,7 +34,7 @@ public class Book {
     private String author;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private Genre genre;
 
     private String publisher;
@@ -57,7 +61,7 @@ public class Book {
     private String fileKey;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private boolean active;
 
     @Version
     private Long version;
@@ -67,6 +71,67 @@ public class Book {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    public Book(String isbn, String title, String author, Genre genre, String publisher,
+                Short publishedYear, String description, String coverImageUrl,
+                Format format, BigDecimal price, Integer stock, String fileKey) {
+        this.format = Objects.requireNonNull(format, "format must not be null");
+        this.active = true;
+        this.descriptionByAi = false;
+        setDetails(isbn, title, author, genre, publisher, publishedYear,
+                description, coverImageUrl, price, stock, fileKey);
+    }
+
+    public void changeDetails(String isbn, String title, String author, Genre genre, String publisher,
+                              Short publishedYear, String description, String coverImageUrl,
+                              BigDecimal price, Integer stock, String fileKey) {
+        setDetails(isbn, title, author, genre, publisher, publishedYear,
+                description, coverImageUrl, price, stock, fileKey);
+    }
+
+    public void hide() {
+        this.active = false;
+    }
+
+    static String normalizeIsbn(String isbn) {
+        return isbn.replace("-", "").replace(" ", "").toUpperCase(Locale.ROOT);
+    }
+
+    private void setDetails(String isbn, String title, String author, Genre genre, String publisher,
+                            Short publishedYear, String description, String coverImageUrl,
+                            BigDecimal price, Integer stock, String fileKey) {
+        String cleanFileKey = blankToNull(fileKey);
+        checkStockAndFile(stock, cleanFileKey);
+
+        this.isbn = normalizeIsbn(isbn);
+        this.title = title.trim();
+        this.author = author.trim();
+        this.genre = Objects.requireNonNull(genre, "genre must not be null");
+        this.publisher = blankToNull(publisher);
+        this.publishedYear = publishedYear;
+        this.description = blankToNull(description);
+        this.coverImageUrl = blankToNull(coverImageUrl);
+        this.price = Objects.requireNonNull(price, "price must not be null")
+                .setScale(2, RoundingMode.UNNECESSARY);
+        this.stock = stock;
+        this.fileKey = cleanFileKey;
+    }
+
+    private void checkStockAndFile(Integer stock, String fileKey) {
+        if (format == Format.EBOOK && stock != null) {
+            throw new BadRequestException("An ebook has no stock. Leave the stock empty.");
+        }
+        if (format == Format.PHYSICAL && stock == null) {
+            throw new BadRequestException("A printed book needs a stock number.");
+        }
+        if (format == Format.PHYSICAL && fileKey != null) {
+            throw new BadRequestException("Only an ebook can have a file.");
+        }
+    }
+
+    private static String blankToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
+    }
 
     @PrePersist
     void onCreate() {
@@ -79,5 +144,4 @@ public class Book {
     void onUpdate() {
         updatedAt = Instant.now();
     }
-
 }
