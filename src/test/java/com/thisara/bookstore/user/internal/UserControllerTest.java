@@ -1,4 +1,4 @@
-package com.thisara.bookstore.user.Internal;
+package com.thisara.bookstore.user.internal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -13,10 +13,6 @@ import com.thisara.bookstore.security.JwtUtil;
 import com.thisara.bookstore.security.SecurityConfig;
 import java.util.List;
 
-import com.thisara.bookstore.user.internal.Role;
-import com.thisara.bookstore.user.internal.UserController;
-import com.thisara.bookstore.user.internal.UserResponse;
-import com.thisara.bookstore.user.internal.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
