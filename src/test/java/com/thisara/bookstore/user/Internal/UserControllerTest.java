@@ -1,4 +1,4 @@
-package com.thisara.bookstore.Internal;
+package com.thisara.bookstore.user.Internal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
