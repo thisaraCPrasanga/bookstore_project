@@ -1,7 +1,7 @@
 package com.thisara.bookstore.catalog.internal;
 
+import com.thisara.bookstore.catalog.Genre;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
@@ -22,31 +22,35 @@ public class BookController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BookResponse> create(@Valid @RequestBody CreateBookRequest request){
+    public ResponseEntity<BookResponse> create(@Valid @RequestBody CreateBookRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.create(request));
     }
 
     @GetMapping
-    public ResponseEntity<PagedModel<BookResponse>> getBooks(@PageableDefault(size = 20,sort = "title") Pageable pageable){
-        return ResponseEntity.ok().body(new PagedModel<>(bookService.findActiveBooks(pageable)));
+    public ResponseEntity<PagedModel<BookResponse>> getBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Genre genre,
+            @RequestParam(required = false) String author,
+            @PageableDefault(size = 20, sort = "title") Pageable pageable) {
+        return ResponseEntity.ok(new PagedModel<>(bookService.searchBooks(title, genre, author, pageable)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBook(@PathVariable Long id){
+    public ResponseEntity<BookResponse> getBook(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.findBook(id));
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> hide(@PathVariable Long id){
-        bookService.hideBook(id);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookResponse> update(@PathVariable Long id,
                                                @Valid @RequestBody UpdateBookRequest request) {
-        return ResponseEntity.ok(bookService.updateBook(id, request));
+        return ResponseEntity.ok(bookService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> hide(@PathVariable Long id) {
+        bookService.hideBook(id);
+        return ResponseEntity.noContent().build();
     }
 }
