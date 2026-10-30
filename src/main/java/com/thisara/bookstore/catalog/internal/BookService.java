@@ -1,9 +1,11 @@
 package com.thisara.bookstore.catalog.internal;
 
+import com.thisara.bookstore.catalog.BookCreatedEvent;
 import com.thisara.bookstore.catalog.Genre;
 import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.ConflictException;
 import com.thisara.bookstore.shared.NotFoundException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,9 +26,11 @@ class BookService {
             List.of("title", "author", "price", "publishedYear", "createdAt");
 
     private final BookRepository bookRepository;
+    private final ApplicationEventPublisher publisher;
 
-    BookService(BookRepository bookRepository) {
+    BookService(BookRepository bookRepository,ApplicationEventPublisher publisher) {
         this.bookRepository = bookRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -42,7 +46,9 @@ class BookService {
                 request.coverImageUrl(), request.format(), request.price(),
                 request.stock(), request.fileKey());
 
-        return BookResponse.from(bookRepository.save(book));
+        Book savedBook = bookRepository.save(book);
+        publisher.publishEvent(new BookCreatedEvent(savedBook.getId()));
+        return BookResponse.from(savedBook);
     }
 
     @Transactional

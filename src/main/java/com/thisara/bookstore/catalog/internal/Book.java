@@ -3,6 +3,7 @@ package com.thisara.bookstore.catalog.internal;
 import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.catalog.Genre;
 import com.thisara.bookstore.shared.BadRequestException;
+import com.thisara.bookstore.shared.ConflictException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -143,5 +144,37 @@ public class Book {
     @PreUpdate
     void onUpdate() {
         updatedAt = Instant.now();
+    }
+
+// reduce book
+    public void reduceBook (int quantity) {
+
+        checkQuantity(quantity);
+
+        if (format == Format.EBOOK) {
+            return;
+        }
+        if (!active){
+            throw new ConflictException("'" + title + "' is no longer sold.");
+        }
+        if (quantity > stock){
+            throw new ConflictException("Not enough stock for '" + title + "'. Only " + stock + " left.");
+        }
+        stock -= quantity;
+    }
+
+//    return book
+    public void returnBook(int quantity){
+        checkQuantity(quantity);
+        if (format == Format.PHYSICAL){
+            stock = stock + quantity;
+        }
+    }
+
+//    checkQuantity function
+    private  static void checkQuantity(int quantity){
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero, but was " + quantity);
+        }
     }
 }
