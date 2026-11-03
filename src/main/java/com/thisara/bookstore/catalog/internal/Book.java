@@ -146,8 +146,9 @@ public class Book {
         updatedAt = Instant.now();
     }
 
-// reduce book
-    public void reduceBook (int quantity) {
+
+
+    public void reduceStock(int quantity) {
 
         checkQuantity(quantity);
 
@@ -163,15 +164,14 @@ public class Book {
         stock -= quantity;
     }
 
-//    return book
-    public void returnBook(int quantity){
+    public void returnStock(int quantity){
         checkQuantity(quantity);
         if (format == Format.PHYSICAL){
             stock = stock + quantity;
         }
     }
 
-//    checkQuantity function
+
     private  static void checkQuantity(int quantity){
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero, but was " + quantity);

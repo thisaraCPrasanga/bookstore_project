@@ -26,12 +26,12 @@ public class CatalogApiImpl implements CatalogApi {
 
     @Override
     public void reduceStock(Long bookId,int quantity){
-        findExistingBook(bookId).reduceBook(quantity);
+        findExistingBook(bookId).reduceStock(quantity);
     }
 
     @Override
     public void returnBook(Long bookId,int quantity){
-        findExistingBook(bookId).returnBook(quantity);
+        findExistingBook(bookId).returnStock(quantity);
     }
 
     private Book findExistingBook(Long bookId){
