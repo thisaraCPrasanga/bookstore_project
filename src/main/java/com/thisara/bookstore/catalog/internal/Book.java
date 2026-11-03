@@ -151,11 +151,11 @@ public class Book {
 
         checkQuantity(quantity);
 
-        if (format == Format.EBOOK) {
-            return;
-        }
         if (!active){
             throw new ConflictException("'" + title + "' is no longer sold.");
+        }
+        if (format == Format.EBOOK) {
+            return;
         }
         if (quantity > stock){
             throw new ConflictException("Not enough stock for '" + title + "'. Only " + stock + " left.");
