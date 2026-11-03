@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class CatalogApiImpl implements CatalogApi {
+class CatalogApiImpl implements CatalogApi {
 
     private final BookRepository bookRepository;
 
@@ -30,7 +30,7 @@ public class CatalogApiImpl implements CatalogApi {
     }
 
     @Override
-    public void returnBook(Long bookId,int quantity){
+    public void returnStock(Long bookId, int quantity){
         findExistingBook(bookId).returnStock(quantity);
     }
 
