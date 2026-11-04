@@ -6,7 +6,11 @@ import com.thisara.bookstore.shared.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -42,6 +46,14 @@ class CatalogApiImpl implements CatalogApi {
         return new BookSummary(
                 book.getId(),book.getTitle(),book.getAuthor(),book.getFormat(),book.getPrice(),book.getStock(),book.isActive()
         );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, BookSummary> findBooks(Collection<Long> bookIds) {
+        return bookRepository.findAllById(bookIds).stream()
+                .map(CatalogApiImpl::toBookSummary)
+                .collect(Collectors.toMap(BookSummary::id, Function.identity()));
     }
 
 
