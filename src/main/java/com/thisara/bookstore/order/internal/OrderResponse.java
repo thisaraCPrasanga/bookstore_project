@@ -9,6 +9,7 @@ import java.util.List;
 public record OrderResponse(
         Long id,
         String orderNumber,
+        String customerEmail,
         OrderStatus status,
         BigDecimal subtotal,
         BigDecimal deliveryFee,
@@ -24,6 +25,7 @@ public record OrderResponse(
         return new OrderResponse(
                 order.getId(),
                 order.getOrderNumber(),
+                order.getCustomerEmail(),
                 order.getStatus(),
                 order.getSubtotal(),
                 order.getDeliveryFee(),

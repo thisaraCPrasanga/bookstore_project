@@ -8,6 +8,7 @@ import java.time.Instant;
 public record OrderSummaryResponse(
         Long id,
         String orderNumber,
+        String customerEmail,
         OrderStatus status,
         BigDecimal totalAmount,
         String currency,
@@ -18,6 +19,7 @@ public record OrderSummaryResponse(
         return new OrderSummaryResponse(
                 order.getId(),
                 order.getOrderNumber(),
+                order.getCustomerEmail(),
                 order.getStatus(),
                 order.getTotalAmount(),
                 order.getCurrency(),

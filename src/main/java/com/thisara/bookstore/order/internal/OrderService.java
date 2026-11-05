@@ -5,6 +5,7 @@ import com.thisara.bookstore.cart.CartLine;
 import com.thisara.bookstore.catalog.BookSummary;
 import com.thisara.bookstore.catalog.CatalogApi;
 import com.thisara.bookstore.catalog.Format;
+import com.thisara.bookstore.order.OrderStatus;
 import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.ConflictException;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,6 +93,34 @@ class OrderService {
                 .filter(found -> found.getUserId().equals(user.id()) || ADMIN_ROLE.equals(user.role()))
                 .orElseThrow(() -> new NotFoundException("Order not found."));
         return OrderResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryResponse> findAllOrders(Pageable pageable) {
+        return orderRepository.findAll(newestFirst(pageable))
+                .map(OrderSummaryResponse::from);
+    }
+
+    public OrderResponse changeStatus(Long orderId, ChangeOrderStatusRequest request, String adminEmail) {
+        if (request.status() == OrderStatus.PAID) {
+            throw new BadRequestException("Only a successful payment can mark an order as paid.");
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found."));
+        order.changeStatus(request.status(), adminEmail, request.note());
+
+        if (request.status() == OrderStatus.CANCELLED) {
+            returnStock(order);
+        }
+
+        return OrderResponse.from(order);
+    }
+
+    private void returnStock(Order order) {
+        for (OrderItem item : order.getItems()) {
+            catalogApi.returnStock(item.getBookId(), item.getQuantity());
+        }
     }
 
     private static Pageable newestFirst(Pageable pageable) {

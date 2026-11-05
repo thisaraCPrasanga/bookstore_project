@@ -1,5 +1,6 @@
 package com.thisara.bookstore.order.internal;
 
+import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.order.OrderStatus;
 import com.thisara.bookstore.shared.ConflictException;
 import jakarta.persistence.*;
@@ -118,6 +119,7 @@ public class Order {
         if (!status.canChangeTo(next)) {
             throw new ConflictException("An order cannot change from " + status + " to " + next + ".");
         }
+        checkFormatRule(next);
 
         OrderStatus previous = status;
         status = next;
@@ -130,6 +132,18 @@ public class Order {
         }
 
         addHistory(previous, next, changedBy, note);
+    }
+
+    private void checkFormatRule(OrderStatus next) {
+        boolean hasPrintedBook = items.stream()
+                .anyMatch(item -> item.getBookFormat() == Format.PHYSICAL);
+
+        if (status == OrderStatus.PAID && next == OrderStatus.DELIVERED && hasPrintedBook) {
+            throw new ConflictException("An order with a printed book must be shipped first.");
+        }
+        if (!hasPrintedBook && (next == OrderStatus.PROCESSING || next == OrderStatus.SHIPPED)) {
+            throw new ConflictException("An ebook-only order has no parcel.");
+        }
     }
 
     private void addHistory(OrderStatus from, OrderStatus to, String changedBy, String note) {

@@ -43,4 +43,19 @@ class OrderController {
             @AuthenticationPrincipal AuthenticatedUser user) {
         return ResponseEntity.ok(orderService.findOrder(id, user));
     }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PagedModel<OrderSummaryResponse>> findAllOrders(Pageable pageable) {
+        return ResponseEntity.ok(new PagedModel<>(orderService.findAllOrders(pageable)));
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponse> changeStatus(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @Valid @RequestBody ChangeOrderStatusRequest request) {
+        return ResponseEntity.ok(orderService.changeStatus(id, request, user.email()));
+    }
 }
