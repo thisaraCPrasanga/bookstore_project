@@ -10,6 +10,12 @@ import com.thisara.bookstore.shared.ConflictException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.thisara.bookstore.security.AuthenticatedUser;
+import com.thisara.bookstore.shared.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -28,6 +34,8 @@ class OrderService {
     private static final String ORDER_CODE_CHARACTERS = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
     private static final int ORDER_CODE_LENGTH = 5;
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static final String ADMIN_ROLE = "ADMIN";
+    private static final Sort NEWEST_FIRST = Sort.by(Sort.Direction.DESC, "createdAt", "id");
 
     private final OrderRepository orderRepository;
     private final CartApi cartApi;
@@ -70,6 +78,24 @@ class OrderService {
         cartApi.clear(userId);
 
         return OrderResponse.from(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryResponse> findMyOrders(Long userId, Pageable pageable) {
+        return orderRepository.findByUserId(userId, newestFirst(pageable))
+                .map(OrderSummaryResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse findOrder(Long orderId, AuthenticatedUser user) {
+        Order order = orderRepository.findById(orderId)
+                .filter(found -> found.getUserId().equals(user.id()) || ADMIN_ROLE.equals(user.role()))
+                .orElseThrow(() -> new NotFoundException("Order not found."));
+        return OrderResponse.from(order);
+    }
+
+    private static Pageable newestFirst(Pageable pageable) {
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), NEWEST_FIRST);
     }
 
     private List<OrderLine> toOrderLines(List<CartLine> cartLines) {
