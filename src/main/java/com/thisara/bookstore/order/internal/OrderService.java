@@ -5,6 +5,7 @@ import com.thisara.bookstore.cart.CartLine;
 import com.thisara.bookstore.catalog.BookSummary;
 import com.thisara.bookstore.catalog.CatalogApi;
 import com.thisara.bookstore.catalog.Format;
+import com.thisara.bookstore.order.OrderDetails;
 import com.thisara.bookstore.order.OrderPaidEvent;
 import com.thisara.bookstore.order.OrderStatus;
 import com.thisara.bookstore.shared.BadRequestException;
@@ -98,6 +99,28 @@ class OrderService {
                 .filter(found -> found.getUserId().equals(user.id()) || ADMIN_ROLE.equals(user.role()))
                 .orElseThrow(() -> new NotFoundException("Order not found."));
         return OrderResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderDetails findDetails(Long orderId) {
+        Order order = findExisting(orderId);
+        OrderAddress address = order.getAddress();
+
+        return new OrderDetails(
+                order.getId(),
+                order.getOrderNumber(),
+                order.getUserId(),
+                order.getCustomerEmail(),
+                order.getStatus(),
+                order.getTotalAmount(),
+                order.getCurrency(),
+                address.fullName(),
+                address.phone(),
+                address.addressLine1(),
+                address.addressLine2(),
+                address.city(),
+                address.postalCode(),
+                address.country());
     }
 
     @Transactional(readOnly = true)
