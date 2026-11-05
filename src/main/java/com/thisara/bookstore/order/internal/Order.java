@@ -23,7 +23,7 @@ import java.util.Objects;
 public class Order {
 
     static final String CHANGED_BY_SYSTEM = "SYSTEM";
-
+    static final String CHANGED_BY_PAYHERE = "PAYHERE";
     private static final String CURRENCY = "LKR";
 
     @Id

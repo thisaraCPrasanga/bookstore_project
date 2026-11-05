@@ -5,10 +5,12 @@ import com.thisara.bookstore.cart.CartLine;
 import com.thisara.bookstore.catalog.BookSummary;
 import com.thisara.bookstore.catalog.CatalogApi;
 import com.thisara.bookstore.catalog.Format;
+import com.thisara.bookstore.order.OrderPaidEvent;
 import com.thisara.bookstore.order.OrderStatus;
 import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.ConflictException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.thisara.bookstore.security.AuthenticatedUser;
@@ -41,15 +43,18 @@ class OrderService {
     private final OrderRepository orderRepository;
     private final CartApi cartApi;
     private final CatalogApi catalogApi;
+    private final ApplicationEventPublisher eventPublisher;
     private final BigDecimal deliveryFee;
 
     OrderService(OrderRepository orderRepository,
                  CartApi cartApi,
                  CatalogApi catalogApi,
+                 ApplicationEventPublisher eventPublisher,
                  @Value("${app.order.delivery-fee}") BigDecimal deliveryFee) {
         this.orderRepository = orderRepository;
         this.cartApi = cartApi;
         this.catalogApi = catalogApi;
+        this.eventPublisher = eventPublisher;
         this.deliveryFee = deliveryFee;
     }
 
@@ -106,18 +111,42 @@ class OrderService {
             throw new BadRequestException("Only a successful payment can mark an order as paid.");
         }
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order not found."));
-        order.changeStatus(request.status(), adminEmail, request.note());
-
+        Order order = findExisting(orderId);
         if (request.status() == OrderStatus.CANCELLED) {
-            returnStock(order);
+            cancelAndReturnStock(order, adminEmail, request.note());
+        } else {
+            order.changeStatus(request.status(), adminEmail, request.note());
         }
 
         return OrderResponse.from(order);
     }
 
-    private void returnStock(Order order) {
+    public void markPaid(Long orderId) {
+        Order order = findExisting(orderId);
+        if (order.getPaidAt() != null) {
+            return;
+        }
+
+        order.changeStatus(OrderStatus.PAID, Order.CHANGED_BY_PAYHERE, "Payment received");
+        eventPublisher.publishEvent(new OrderPaidEvent(order.getId()));
+    }
+
+    public void cancelOrder(Long orderId, String changedBy, String note) {
+        Order order = findExisting(orderId);
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return;
+        }
+
+        cancelAndReturnStock(order, changedBy, note);
+    }
+
+    private Order findExisting(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found."));
+    }
+
+    private void cancelAndReturnStock(Order order, String changedBy, String note) {
+        order.changeStatus(OrderStatus.CANCELLED, changedBy, note);
         for (OrderItem item : order.getItems()) {
             catalogApi.returnStock(item.getBookId(), item.getQuantity());
         }
