@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/books", "/api/v1/books/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/payments/payhere/notify").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex->ex
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

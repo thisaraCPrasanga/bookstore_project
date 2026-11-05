@@ -3,13 +3,17 @@ package com.thisara.bookstore.payment.internal;
 import com.thisara.bookstore.order.OrderApi;
 import com.thisara.bookstore.order.OrderDetails;
 import com.thisara.bookstore.order.OrderStatus;
+import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.ConflictException;
 import com.thisara.bookstore.shared.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@Slf4j
 @Service
 @Transactional
 class PaymentService {
@@ -63,6 +67,65 @@ class PaymentService {
                 fullAddress(order),
                 order.city(),
                 order.country());
+    }
+
+    public void handleNotification(PayHereNotification notification) {
+        if (!hasher.isValid(notification)) {
+            throw new BadRequestException("Invalid PayHere signature.");
+        }
+
+        PaymentTransaction transaction = findTransaction(notification);
+        if (!matchesCheckout(transaction, notification)) {
+            throw new ConflictException("The payment does not match the checkout.");
+        }
+
+        short statusCode = Short.parseShort(notification.statusCode());
+        PaymentStatus newStatus = PaymentStatus.fromPayHereCode(statusCode);
+
+        if (transaction.getStatus() == PaymentStatus.SUCCESS && newStatus != PaymentStatus.CHARGEDBACK) {
+            if (!notification.paymentId().equals(transaction.getPayherePaymentId())) {
+                log.warn("Refund needed: order {} was paid twice", notification.orderId());
+            }
+            return;
+        }
+
+        transaction.recordResult(notification.paymentId(), statusCode,
+                notification.method(), notification.statusMessage());
+        updateOrder(transaction, newStatus);
+    }
+
+    private PaymentTransaction findTransaction(PayHereNotification notification) {
+        return transactionRepository.findByPayherePaymentId(notification.paymentId())
+                .or(() -> transactionRepository.findFirstByOrderNumberOrderByIdDesc(notification.orderId()))
+                .orElseThrow(() -> new NotFoundException("Payment not found."));
+    }
+
+    private static boolean matchesCheckout(PaymentTransaction transaction, PayHereNotification notification) {
+        return new BigDecimal(notification.payhereAmount()).compareTo(transaction.getAmount()) == 0
+                && transaction.getCurrency().equals(notification.payhereCurrency());
+    }
+
+    private void updateOrder(PaymentTransaction transaction, PaymentStatus status) {
+        OrderDetails order = orderApi.findOrder(transaction.getOrderId());
+
+        switch (status) {
+            case SUCCESS -> {
+                if (order.status() == OrderStatus.CANCELLED) {
+                    log.warn("Refund needed: order {} was paid after it was cancelled", order.orderNumber());
+                } else {
+                    orderApi.markPaid(order.id());
+                }
+            }
+            case FAILED -> cancelIfUnpaid(order, "Payment failed");
+            case CANCELLED -> cancelIfUnpaid(order, "Payment cancelled");
+            default -> log.info("Order {} payment status is {}", order.orderNumber(), status);
+        }
+    }
+
+    private void cancelIfUnpaid(OrderDetails order, String note) {
+        if (order.status() == OrderStatus.PENDING_PAYMENT) {
+            orderApi.cancel(order.id(), note);
+        }
     }
 
     private static String[] splitName(String fullName) {

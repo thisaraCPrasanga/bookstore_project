@@ -21,6 +21,16 @@ class PayHereHasher {
                 + md5(properties.merchantSecret()));
     }
 
+    boolean isValid(PayHereNotification notification) {
+        String expected = md5(notification.merchantId() + notification.orderId()
+                + notification.payhereAmount() + notification.payhereCurrency()
+                + notification.statusCode() + md5(properties.merchantSecret()));
+
+        return MessageDigest.isEqual(
+                expected.getBytes(StandardCharsets.UTF_8),
+                notification.md5sig().getBytes(StandardCharsets.UTF_8));
+    }
+
     private static String md5(String text) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
