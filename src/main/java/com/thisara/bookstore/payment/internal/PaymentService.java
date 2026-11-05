@@ -106,20 +106,18 @@ class PaymentService {
     }
 
     private void updateOrder(PaymentTransaction transaction, PaymentStatus status) {
-        OrderDetails order = orderApi.findOrder(transaction.getOrderId());
-
-        switch (status) {
-            case SUCCESS -> {
-                if (order.status() == OrderStatus.CANCELLED) {
-                    log.warn("Refund needed: order {} was paid after it was cancelled", order.orderNumber());
-                } else {
-                    orderApi.markPaid(order.id());
-                }
-            }
-            case FAILED -> cancelIfUnpaid(order, "Payment failed");
-            case CANCELLED -> cancelIfUnpaid(order, "Payment cancelled");
-            default -> log.info("Order {} payment status is {}", order.orderNumber(), status);
+        if (status != PaymentStatus.SUCCESS) {
+            log.info("Order {} payment status is {}", transaction.getOrderNumber(), status);
+            return;
         }
+
+        OrderDetails order = orderApi.findOrder(transaction.getOrderId());
+        if (order.status() == OrderStatus.CANCELLED) {
+            log.warn("Refund needed: order {} was paid after it was cancelled", order.orderNumber());
+            return;
+        }
+
+        orderApi.markPaid(order.id());
     }
 
     private void cancelIfUnpaid(OrderDetails order, String note) {
