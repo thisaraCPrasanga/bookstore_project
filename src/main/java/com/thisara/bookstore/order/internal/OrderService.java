@@ -6,6 +6,7 @@ import com.thisara.bookstore.catalog.BookSummary;
 import com.thisara.bookstore.catalog.CatalogApi;
 import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.order.OrderDetails;
+import com.thisara.bookstore.order.OrderItemDetails;
 import com.thisara.bookstore.order.OrderPaidEvent;
 import com.thisara.bookstore.order.OrderStatus;
 import com.thisara.bookstore.shared.BadRequestException;
@@ -120,7 +121,10 @@ class OrderService {
                 address.addressLine2(),
                 address.city(),
                 address.postalCode(),
-                address.country());
+                address.country(),
+                order.getItems().stream()
+                        .map(item -> new OrderItemDetails(item.getId(), item.getBookId(), item.getBookFormat()))
+                        .toList());
     }
 
     @Transactional(readOnly = true)
@@ -202,5 +206,9 @@ class OrderService {
             code.append(ORDER_CODE_CHARACTERS.charAt(RANDOM.nextInt(ORDER_CODE_CHARACTERS.length())));
         }
         return "BK-" + date + "-" + code;
+    }
+
+    public void startFulfilment(Long orderId) {
+        findExisting(orderId).startFulfilment();
     }
 }

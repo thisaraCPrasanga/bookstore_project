@@ -68,4 +68,8 @@ public class OrderItem {
     void cancel() {
         fulfilmentStatus = FulfilmentStatus.CANCELLED;
     }
+
+    void deliver() {
+        fulfilmentStatus = FulfilmentStatus.DELIVERED;
+    }
 }

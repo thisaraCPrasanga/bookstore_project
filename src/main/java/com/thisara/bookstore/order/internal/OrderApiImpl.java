@@ -27,4 +27,9 @@ class OrderApiImpl implements OrderApi {
     public OrderDetails findOrder(Long orderId) {
         return orderService.findDetails(orderId);
     }
+
+    @Override
+    public void startFulfilment(Long orderId) {
+        orderService.startFulfilment(orderId);
+    }
 }

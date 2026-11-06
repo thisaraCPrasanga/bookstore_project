@@ -8,4 +8,6 @@ public interface OrderApi {
 
     OrderDetails findOrder(Long orderId);
 
+    void startFulfilment(Long orderId);
+
 }

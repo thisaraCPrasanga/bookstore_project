@@ -135,15 +135,30 @@ public class Order {
     }
 
     private void checkFormatRule(OrderStatus next) {
-        boolean hasPrintedBook = items.stream()
-                .anyMatch(item -> item.getBookFormat() == Format.PHYSICAL);
+        boolean printed = hasPrintedBook();
 
-        if (status == OrderStatus.PAID && next == OrderStatus.DELIVERED && hasPrintedBook) {
+        if (status == OrderStatus.PAID && next == OrderStatus.DELIVERED && printed) {
             throw new ConflictException("An order with a printed book must be shipped first.");
         }
-        if (!hasPrintedBook && (next == OrderStatus.PROCESSING || next == OrderStatus.SHIPPED)) {
+        if (!printed && (next == OrderStatus.PROCESSING || next == OrderStatus.SHIPPED)) {
             throw new ConflictException("An ebook-only order has no parcel.");
         }
+    }
+
+    public void startFulfilment() {
+        items.stream()
+                .filter(item -> item.getBookFormat() == Format.EBOOK)
+                .forEach(OrderItem::deliver);
+
+        if (hasPrintedBook()) {
+            changeStatus(OrderStatus.PROCESSING, CHANGED_BY_SYSTEM, "Parcel is being prepared");
+        } else {
+            changeStatus(OrderStatus.DELIVERED, CHANGED_BY_SYSTEM, "Ebook is ready to download");
+        }
+    }
+
+    private boolean hasPrintedBook() {
+        return items.stream().anyMatch(item -> item.getBookFormat() == Format.PHYSICAL);
     }
 
     private void addHistory(OrderStatus from, OrderStatus to, String changedBy, String note) {

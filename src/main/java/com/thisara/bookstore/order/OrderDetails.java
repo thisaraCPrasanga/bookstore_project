@@ -1,6 +1,7 @@
 package com.thisara.bookstore.order;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record OrderDetails(
         Long id,
@@ -16,6 +17,7 @@ public record OrderDetails(
         String addressLine2,
         String city,
         String postalCode,
-        String country
+        String country,
+        List<OrderItemDetails> items
 ) {
 }
