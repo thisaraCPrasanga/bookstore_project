@@ -120,12 +120,6 @@ class PaymentService {
         orderApi.markPaid(order.id());
     }
 
-    private void cancelIfUnpaid(OrderDetails order, String note) {
-        if (order.status() == OrderStatus.PENDING_PAYMENT) {
-            orderApi.cancel(order.id(), note);
-        }
-    }
-
     private static String[] splitName(String fullName) {
         String[] parts = fullName.strip().split("\\s+", 2);
         return parts.length == 2 ? parts : new String[] {parts[0], parts[0]};

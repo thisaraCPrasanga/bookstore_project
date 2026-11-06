@@ -19,11 +19,6 @@ class OrderApiImpl implements OrderApi {
     }
 
     @Override
-    public void cancel(Long orderId, String note) {
-        orderService.cancelOrder(orderId, Order.CHANGED_BY_PAYHERE, note);
-    }
-
-    @Override
     public OrderDetails findOrder(Long orderId) {
         return orderService.findDetails(orderId);
     }

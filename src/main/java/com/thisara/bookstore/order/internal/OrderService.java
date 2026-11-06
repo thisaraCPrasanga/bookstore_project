@@ -151,13 +151,13 @@ class OrderService {
         eventPublisher.publishEvent(new OrderPaidEvent(order.getId()));
     }
 
-    public void cancelOrder(Long orderId, String changedBy, String note) {
+    public void cancelUnpaidOrder(Long orderId, String note) {
         Order order = findExisting(orderId);
-        if (order.getStatus() == OrderStatus.CANCELLED) {
+        if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             return;
         }
 
-        cancelAndReturnStock(order, changedBy, note);
+        cancelAndReturnStock(order, Order.CHANGED_BY_SYSTEM, note);
     }
 
     private Order findExisting(Long orderId) {
