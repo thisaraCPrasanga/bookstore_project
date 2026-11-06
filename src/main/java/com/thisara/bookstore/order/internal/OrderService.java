@@ -13,17 +13,15 @@ import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.ConflictException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.thisara.bookstore.security.AuthenticatedUser;
 import com.thisara.bookstore.shared.NotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -213,5 +211,15 @@ class OrderService {
 
     public void markDelivered(Long orderId, String changedBy) {
         findExisting(orderId).deliverParcel(changedBy);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> findUnpaidOrderIds(Instant cutoff, int limit) {
+        return orderRepository
+                .findByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
+                        OrderStatus.PENDING_PAYMENT, cutoff, Limit.of(limit))
+                .stream()
+                .map(Order::getId)
+                .toList();
     }
 }
