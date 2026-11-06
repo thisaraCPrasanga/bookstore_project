@@ -44,7 +44,7 @@ class CatalogApiImpl implements CatalogApi {
 
     private static BookSummary toBookSummary(Book book){
         return new BookSummary(
-                book.getId(),book.getTitle(),book.getAuthor(),book.getFormat(),book.getPrice(),book.getStock(),book.isActive()
+                book.getId(),book.getTitle(),book.getAuthor(),book.getFormat(),book.getPrice(),book.getStock(),book.isActive(),book.getFileKey()
         );
     }
 

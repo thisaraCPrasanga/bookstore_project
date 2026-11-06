@@ -9,6 +9,7 @@ public record BookSummary(
         Format format,
         BigDecimal price,
         Integer stock,
-        boolean active
+        boolean active,
+        String fileKey
 ) {
 }

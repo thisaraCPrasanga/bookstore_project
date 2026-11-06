@@ -75,4 +75,8 @@ public class DownloadGrant {
     void onCreate() {
         createdAt = Instant.now();
     }
+
+    public int getDownloadsLeft() {
+        return maxDownloads - downloadCount;
+    }
 }
