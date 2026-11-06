@@ -32,4 +32,15 @@ class OrderApiImpl implements OrderApi {
     public void startFulfilment(Long orderId) {
         orderService.startFulfilment(orderId);
     }
+
+    @Override
+    public void markShipped(Long orderId, String changedBy, String trackingNumber) {
+        orderService.markShipped(orderId, changedBy, trackingNumber);
+    }
+
+    @Override
+    public void markDelivered(Long orderId, String changedBy) {
+        orderService.markDelivered(orderId, changedBy);
+    }
+
 }

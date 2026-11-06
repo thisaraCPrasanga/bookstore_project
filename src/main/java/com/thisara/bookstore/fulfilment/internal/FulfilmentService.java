@@ -6,8 +6,13 @@ import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.order.OrderApi;
 import com.thisara.bookstore.order.OrderDetails;
 import com.thisara.bookstore.order.OrderItemDetails;
+import com.thisara.bookstore.shared.BadRequestException;
 import com.thisara.bookstore.shared.NotFoundException;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +25,7 @@ import java.util.UUID;
 @Transactional
 class FulfilmentService {
 
+    private static final Sort OLDEST_FIRST = Sort.by(Sort.Direction.ASC, "createdAt", "id");
     private final OrderApi orderApi;
     private final CatalogApi catalogApi;
     private final DownloadGrantRepository grantRepository;
@@ -82,6 +88,39 @@ class FulfilmentService {
         Resource file = ebookStorage.load(book.fileKey());
 
         return new EbookDownload(file, fileName(book));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ShipmentResponse> findShipments(ShipmentStatus status, Pageable pageable) {
+        Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), OLDEST_FIRST);
+        Page<Shipment> shipments = status == null
+                ? shipmentRepository.findAll(page)
+                : shipmentRepository.findByStatus(status, page);
+        return shipments.map(ShipmentResponse::from);
+    }
+
+    public ShipmentResponse updateShipment(Long shipmentId, UpdateShipmentRequest request, String adminEmail) {
+        Shipment shipment = shipmentRepository.findById(shipmentId)
+                .orElseThrow(() -> new NotFoundException("Shipment not found."));
+
+        switch (request.status()) {
+            case SHIPPED -> {
+                String trackingNumber = blankToNull(request.trackingNumber());
+                shipment.markShipped(trackingNumber);
+                orderApi.markShipped(shipment.getOrderId(), adminEmail, trackingNumber);
+            }
+            case DELIVERED -> {
+                shipment.markDelivered();
+                orderApi.markDelivered(shipment.getOrderId(), adminEmail);
+            }
+            case PENDING -> throw new BadRequestException("A shipment cannot go back to PENDING.");
+        }
+
+        return ShipmentResponse.from(shipment);
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.strip();
     }
 
     private static String fileName(BookSummary book) {

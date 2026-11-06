@@ -72,4 +72,9 @@ public class OrderItem {
     void deliver() {
         fulfilmentStatus = FulfilmentStatus.DELIVERED;
     }
+
+    void ship() {
+        fulfilmentStatus = FulfilmentStatus.SHIPPED;
+    }
+
 }

@@ -134,20 +134,15 @@ class OrderService {
     }
 
     public OrderResponse changeStatus(Long orderId, ChangeOrderStatusRequest request, String adminEmail) {
-        if (request.status() == OrderStatus.PAID) {
-            throw new BadRequestException("Only a successful payment can mark an order as paid.");
+        if (request.status() != OrderStatus.CANCELLED) {
+            throw new BadRequestException(
+                    "Admins can only cancel orders here. Payments and shipments change the other statuses.");
         }
 
         Order order = findExisting(orderId);
-        if (request.status() == OrderStatus.CANCELLED) {
-            cancelAndReturnStock(order, adminEmail, request.note());
-        } else {
-            order.changeStatus(request.status(), adminEmail, request.note());
-        }
-
+        cancelAndReturnStock(order, adminEmail, request.note());
         return OrderResponse.from(order);
     }
-
     public void markPaid(Long orderId) {
         Order order = findExisting(orderId);
         if (order.getPaidAt() != null) {
@@ -210,5 +205,13 @@ class OrderService {
 
     public void startFulfilment(Long orderId) {
         findExisting(orderId).startFulfilment();
+    }
+
+    public void markShipped(Long orderId, String changedBy, String trackingNumber) {
+        findExisting(orderId).shipParcel(changedBy, trackingNumber);
+    }
+
+    public void markDelivered(Long orderId, String changedBy) {
+        findExisting(orderId).deliverParcel(changedBy);
     }
 }

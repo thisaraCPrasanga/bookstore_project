@@ -157,6 +157,21 @@ public class Order {
         }
     }
 
+    public void shipParcel(String changedBy, String trackingNumber) {
+        String note = trackingNumber == null ? "Parcel shipped" : "Tracking number: " + trackingNumber;
+        changeStatus(OrderStatus.SHIPPED, changedBy, note);
+        printedItems().forEach(OrderItem::ship);
+    }
+
+    public void deliverParcel(String changedBy) {
+        changeStatus(OrderStatus.DELIVERED, changedBy, "Parcel delivered");
+        printedItems().forEach(OrderItem::deliver);
+    }
+
+    private java.util.stream.Stream<OrderItem> printedItems() {
+        return items.stream().filter(item -> item.getBookFormat() == Format.PHYSICAL);
+    }
+
     private boolean hasPrintedBook() {
         return items.stream().anyMatch(item -> item.getBookFormat() == Format.PHYSICAL);
     }

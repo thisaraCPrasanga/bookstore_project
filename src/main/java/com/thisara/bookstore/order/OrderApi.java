@@ -10,4 +10,8 @@ public interface OrderApi {
 
     void startFulfilment(Long orderId);
 
+    void markShipped(Long orderId, String changedBy, String trackingNumber);
+
+    void markDelivered(Long orderId, String changedBy);
+
 }
