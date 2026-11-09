@@ -2,11 +2,14 @@ package com.thisara.bookstore.catalog.internal;
 
 import com.thisara.bookstore.catalog.BookSummary;
 import com.thisara.bookstore.catalog.CatalogApi;
+import com.thisara.bookstore.catalog.Format;
 import com.thisara.bookstore.shared.NotFoundException;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -54,6 +57,23 @@ class CatalogApiImpl implements CatalogApi {
         return bookRepository.findAllById(bookIds).stream()
                 .map(CatalogApiImpl::toBookSummary)
                 .collect(Collectors.toMap(BookSummary::id, Function.identity()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookSummary> findLowStockBooks(int threshold, int limit) {
+        if (threshold < 0) {
+            throw new IllegalArgumentException("threshold must be 0 or more");
+        }
+        if (limit < 1) {
+            throw new IllegalArgumentException("limit must be 1 or more");
+        }
+        return bookRepository
+                .findByFormatAndActiveTrueAndStockLessThanEqualOrderByStockAscTitleAsc(
+                        Format.PHYSICAL, threshold, Limit.of(limit))
+                .stream()
+                .map(CatalogApiImpl::toBookSummary)
+                .toList();
     }
 
 
