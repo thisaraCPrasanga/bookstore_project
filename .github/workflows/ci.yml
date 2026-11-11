@@ -1,0 +1,50 @@
+
+name: Bookstore CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: bookstore
+          POSTGRES_USER: bookstore_user
+          POSTGRES_PASSWORD: ci_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bookstore_user -d bookstore"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run Maven tests
+        run: ./mvnw -B clean verify
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/bookstore
+          DB_USERNAME: bookstore_user
+          DB_PASSWORD: ci_test_password
+          JWT_SECRET: AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA=
+          ADMIN_EMAIL: ci-admin@example.invalid
+          ADMIN_PASSWORD: ci_only_admin_password_2026
+          PAYHERE_MERCHANT_ID: "000000"
+          PAYHERE_MERCHANT_SECRET: ci_fake_payhere_secret
