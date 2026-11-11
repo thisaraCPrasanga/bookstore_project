@@ -16,5 +16,26 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build: .
+    image: bookstore:latest
+    container_name: bookStore-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/bookstore
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PAYHERE_MERCHANT_ID: ${PAYHERE_MERCHANT_ID}
+      PAYHERE_MERCHANT_SECRET: ${PAYHERE_MERCHANT_SECRET}
+      PAYHERE_NOTIFY_URL: ${PAYHERE_NOTIFY_URL}
+      EBOOKS_FOLDER: /app/ebooks
+    volumes:
+        - ./ebooks:/app/ebooks
+
 volumes:
   bookstore-pgdata:
