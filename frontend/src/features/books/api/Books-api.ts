@@ -12,10 +12,14 @@ export interface BookPage {
 }
 
 
-export async function getBooks(title?: string): Promise<BookPage> {
+export async function getBooks(title?: string, page:number = 0,author?:string, genre?:string): Promise<BookPage> {
   const response = await apiClient.get<BookPage>("/books", {
     params: {
       title,
+      page,
+      size: 6,
+      author,
+      genre
     },
   });
 
