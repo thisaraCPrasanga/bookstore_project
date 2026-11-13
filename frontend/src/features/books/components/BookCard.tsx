@@ -1,4 +1,5 @@
 import type { Book } from "../api/Book";
+import { Link } from "react-router";
 
 interface BookCardProps {
   book: Book;
@@ -45,7 +46,13 @@ export default function BookCard({ book }: BookCardProps) {
       ? `In stock: ${book.stock}`
       : "Out of stock"}
   </p>
-)}
+      )}
+      <Link
+  to={`/books/${book.id}`}
+  className="mt-4 inline-block rounded-lg border border-teal-700 px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-50"
+>
+  View details
+</Link>
     </li>
   );
 }

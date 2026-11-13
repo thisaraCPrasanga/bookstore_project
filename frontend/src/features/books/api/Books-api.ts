@@ -26,3 +26,9 @@ export async function getBooks(title?: string, page:number = 0,author?:string, g
   return response.data;
 }
 
+export async function getBookById(id: string): Promise<Book> {
+  const response = await apiClient.get<Book>(`/books/${id}`);
+
+  return response.data;
+}
+
