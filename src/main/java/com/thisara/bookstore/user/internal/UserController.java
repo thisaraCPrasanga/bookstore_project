@@ -1,11 +1,12 @@
 package com.thisara.bookstore.user.internal;
 
+import com.thisara.bookstore.security.AuthCookieService;
 import com.thisara.bookstore.security.AuthenticatedUser;
+import com.thisara.bookstore.security.CsrfTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final AuthCookieService authCookieService;
+    private final CsrfTokenService csrfTokenService;
 
-    UserController(UserService userService){
+    UserController(UserService userService, AuthCookieService authCookieService,CsrfTokenService csrfTokenService){
         this.userService=userService;
+        this.authCookieService= authCookieService;
+        this.csrfTokenService=csrfTokenService;
     }
 
     @PostMapping("/register")
@@ -29,8 +34,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.login(loginRequest));
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response) {
+        LoginResult loginResult = userService.login(loginRequest);
+
+        csrfTokenService.rotateToken(request,response);
+
+        ResponseCookie cookie = authCookieService.createAuthCookies(loginResult.token());
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,cookie.toString())
+                .body(loginResult.user());
     }
 
     @GetMapping
@@ -53,6 +66,22 @@ public class UserController {
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal AuthenticatedUser currentUser){
         return ResponseEntity.ok(userService.getById(currentUser.id()));
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+
+        csrfTokenService.rotateToken(request,response);
+
+        ResponseCookie cookie =
+                authCookieService.clearAuthCookies();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 
 }

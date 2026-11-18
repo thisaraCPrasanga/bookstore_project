@@ -50,7 +50,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResult login(LoginRequest loginRequest) {
         String email = User.normalizeEmail(loginRequest.email());
 
         User user = userRepository.findByEmail(email)
@@ -63,13 +63,17 @@ public class UserService {
 
         String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole().name());
 
-        return new LoginResponse(
-                token,
+        LoginResponse loginResponse= new LoginResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole()
+        );
+
+        return new LoginResult(
+                token,
+                loginResponse
         );
     }
 

@@ -4,27 +4,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.thisara.bookstore.security.AuthCookieService;
+import com.thisara.bookstore.security.CsrfTokenService;
 import com.thisara.bookstore.security.JwtUtil;
 import com.thisara.bookstore.security.SecurityConfig;
 import java.util.List;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfig.class, JwtUtil.class})
+@Import({SecurityConfig.class, JwtUtil.class, AuthCookieService.class, CsrfTokenService.class})
 @TestPropertySource(properties = {
         "app.jwt.secret=dGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQtdGVzdC0xMjM=",
         "app.jwt.expiration-minutes=60"
@@ -61,7 +64,10 @@ class UserControllerTest {
     @Test
     void meWithBrokenTokenReturns401() throws Exception {
         mockMvc.perform(get("/api/v1/users/me")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer not-a-token"))
+                        .cookie(new Cookie(
+                                AuthCookieService.AUTH_COOKIE_NAME,
+                                "not-a-token"
+                        )))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -70,7 +76,10 @@ class UserControllerTest {
         when(userService.getById(1L)).thenReturn(nimal());
 
         mockMvc.perform(get("/api/v1/users/me")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + customerToken()))
+                        .cookie(new Cookie(
+                                AuthCookieService.AUTH_COOKIE_NAME,
+                                customerToken()
+                        )))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("nimal@example.com"));
 
@@ -80,7 +89,10 @@ class UserControllerTest {
     @Test
     void customerCannotListUsers() throws Exception {
         mockMvc.perform(get("/api/v1/users")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + customerToken()))
+                        .cookie(new Cookie(
+                                AuthCookieService.AUTH_COOKIE_NAME,
+                                customerToken()
+                        )))
                 .andExpect(status().isForbidden());
 
         verify(userService, never()).getAll();
@@ -91,7 +103,10 @@ class UserControllerTest {
         when(userService.getAll()).thenReturn(List.of(nimal()));
 
         mockMvc.perform(get("/api/v1/users")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken()))
+                        .cookie(new Cookie(
+                                AuthCookieService.AUTH_COOKIE_NAME,
+                                adminToken()
+                        )))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].email").value("nimal@example.com"));
     }
@@ -102,6 +117,7 @@ class UserControllerTest {
                 new UserResponse(3L, "kamal@example.com", "Kamal", "Silva", null, Role.CUSTOMER));
 
         mockMvc.perform(post("/api/v1/users/register")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
