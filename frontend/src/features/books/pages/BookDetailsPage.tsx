@@ -1,157 +1,144 @@
+import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router";
+import { Link, useParams } from "react-router";
 import type { Book } from "../api/Book";
 import { getBookById } from "../api/Books-api";
+import { formatBookPrice, genreLabels } from "../book-display";
+import BookAvailability from "../components/BookAvailability";
+import BookCover from "../components/BookCover";
+
+type BookResult = { requestKey: string } & (
+  | { status: "ready"; book: Book }
+  | { status: "unavailable" | "error" }
+);
+
+const detailGrid = "grid items-start gap-6 md:grid-cols-[minmax(0,4fr)_minmax(0,5fr)] lg:gap-10";
+const coverClass = "h-80 rounded-2xl border border-stone-200 px-8 py-8 sm:h-96 lg:h-[28rem] lg:py-10";
 
 export default function BookDetailsPage() {
   const { id } = useParams();
-
-  const [book, setBook] = useState<Book | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [result, setResult] = useState<BookResult | null>(null);
+  const requestKey = `${id ?? ""}:${attempt}`;
+  const current = result?.requestKey === requestKey ? result : null;
+  const unavailable = !id || current?.status === "unavailable";
 
   useEffect(() => {
-    let ignore = false;
+    if (!id) return;
+    const controller = new AbortController();
 
-    async function loadBook() {
-      setIsLoading(true);
-      setErrorMessage(null);
-      setBook(null);
+    getBookById(id, controller.signal).then(
+      (book) => {
+        if (!controller.signal.aborted) setResult({ requestKey, status: "ready", book });
+      },
+      (error: unknown) => {
+        if (controller.signal.aborted) return;
+        const httpStatus = isAxiosError(error) ? error.response?.status : undefined;
+        setResult({ requestKey, status: httpStatus === 404 || httpStatus === 400 ? "unavailable" : "error" });
+      },
+    );
 
-      if (!id) {
-        setErrorMessage("Book ID is missing.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const data = await getBookById(id);
-
-        if (!ignore) {
-          setBook(data);
-        }
-      } catch (error) {
-        if (!ignore) {
-          console.error("Failed to load book", error);
-          setErrorMessage("Unable to load this book.");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadBook();
-
-    return () => {
-      ignore = true;
-    };
-  }, [id]);
+    return () => controller.abort();
+  }, [id, requestKey]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 pt-5 pb-12 sm:px-6 sm:pt-7 lg:px-8 lg:pb-16">
       <Link
-  to="/books"
-  className="mb-6 inline-block text-sm font-medium text-teal-700 hover:underline"
->
-  ← Back to books
-</Link>
-      {isLoading && <p>Loading book...</p>}
+        to="/books"
+        className="mb-3 inline-flex min-h-11 items-center gap-2 rounded px-1 text-sm font-semibold text-teal-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+      >
+        <span aria-hidden="true">←</span> Back to books
+      </Link>
 
-      {errorMessage && (
-        <p role="alert" className="text-red-600">
-          {errorMessage}
-        </p>
-      )}
-
-      {!isLoading && !errorMessage && book && (
+      {id && !current && (
         <>
-          {book.coverImageUrl ? (
-  <img
-    src={book.coverImageUrl}
-    alt={`${book.title} cover`}
-    className="mb-6 h-72 w-48 rounded-lg object-contain"
-  />
-) : (
-  <div className="mb-6 flex h-72 w-48 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
-    No cover available
-  </div>
-)}
-          <h1 className="text-3xl font-bold text-gray-900">
-            {book.title}
-          </h1>
-          <p className="mt-2 text-gray-600">By {book.author}</p>
-
-          <p className="mt-4 text-2xl font-bold text-gray-900">
-  {new Intl.NumberFormat("en-LK", {
-    style: "currency",
-    currency: "LKR",
-  }).format(book.price)}
-</p>
-
-<p className="mt-3">
-  <span className="inline-block rounded-full bg-teal-50 px-3 py-1 text-sm font-medium text-teal-800">
-    {book.format === "EBOOK" ? "Ebook" : "Printed book"}
-  </span>
-          </p>
-          
-          {book.format === "PHYSICAL" && (
-  <p
-    className={`mt-3 text-sm font-medium ${
-      book.stock !== null && book.stock > 0
-        ? "text-green-700"
-        : "text-red-600"
-    }`}
-  >
-    {book.stock !== null && book.stock > 0
-      ? `In stock: ${book.stock}`
-      : "Out of stock"}
-  </p>
-          )}
-          
-          {book.description && (
-  <div className="mt-6">
-    <h2 className="text-lg font-semibold text-gray-900">
-      About this book
-    </h2>
-
-    <p className="mt-2 whitespace-pre-line leading-relaxed text-gray-600">
-      {book.description}
-    </p>
-  </div>
-          )}
-          
-          <dl className="mt-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-  <div>
-    <dt className="text-gray-500">Genre</dt>
-    <dd className="mt-1 font-medium">
-      {book.genre.replaceAll("_", " ")}
-    </dd>
-  </div>
-
-  {book.publisher && (
-    <div>
-      <dt className="text-gray-500">Publisher</dt>
-      <dd className="mt-1 font-medium">{book.publisher}</dd>
-    </div>
-  )}
-
-  {book.publishedYear !== null && (
-    <div>
-      <dt className="text-gray-500">Published year</dt>
-      <dd className="mt-1 font-medium">{book.publishedYear}</dd>
-    </div>
-  )}
-
-  <div>
-    <dt className="text-gray-500">ISBN</dt>
-    <dd className="mt-1 break-all font-medium">{book.isbn}</dd>
-  </div>
-</dl>
-
+          <p role="status" className="mb-4 text-sm text-stone-600">Loading book…</p>
+          <div className={detailGrid} aria-hidden="true">
+            <div className={`${coverClass} bg-stone-200/65`} />
+            <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 sm:p-8">
+              <div className="h-8 w-3/4 rounded bg-stone-200" />
+              <div className="h-4 w-1/3 rounded bg-stone-100" />
+              <div className="h-20 rounded bg-stone-100" />
+            </div>
+          </div>
         </>
       )}
+
+      {(unavailable || current?.status === "error") && (
+        <div className="rounded-2xl border border-red-200 bg-white p-6 sm:p-8">
+          <div role="alert">
+            <h1 className="font-serif text-2xl text-red-900">
+              {unavailable ? "This book is unavailable" : "The book details couldn’t load"}
+            </h1>
+          </div>
+          {!unavailable && (
+            <button
+              type="button"
+              onClick={() => setAttempt((current) => current + 1)}
+              className="mt-4 min-h-11 rounded-lg bg-teal-700 px-4 text-sm font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            >
+              Try again
+            </button>
+          )}
+        </div>
+      )}
+
+      {current?.status === "ready" && <BookDetails book={current.book} />}
     </section>
+  );
+}
+
+function BookDetails({ book }: { book: Book }) {
+  return (
+    <article className={detailGrid}>
+      <BookCover book={book} className={coverClass} loading="eager" />
+
+      <div className="min-w-0 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-8">
+        <h1 className="font-serif text-3xl leading-tight tracking-tight wrap-anywhere text-stone-950 sm:text-4xl lg:text-5xl">
+          {book.title}
+        </h1>
+        <p className="mt-3 text-base wrap-anywhere text-stone-600">By {book.author}</p>
+
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-y border-stone-200 py-4">
+          <p className="text-2xl font-semibold tracking-tight text-stone-950">{formatBookPrice(book.price)}</p>
+          <BookAvailability format={book.format} stock={book.stock} />
+        </div>
+
+        {book.description && (
+          <div className="mt-6">
+            <h2 className="font-serif text-2xl text-stone-950">About this book</h2>
+            <p className="mt-2 leading-relaxed wrap-anywhere whitespace-pre-line text-stone-700">
+              {book.description}
+            </p>
+          </div>
+        )}
+
+        <div className="mt-6">
+          <h2 className="font-serif text-2xl text-stone-950">Book information</h2>
+          <dl className="mt-3 grid gap-x-5 gap-y-4 rounded-xl bg-stone-50 p-4 text-sm sm:grid-cols-2 sm:p-5">
+            <div>
+              <dt className="text-stone-600">Genre</dt>
+              <dd className="mt-1 font-medium text-stone-900">{genreLabels[book.genre]}</dd>
+            </div>
+            <div>
+              <dt className="text-stone-600">ISBN</dt>
+              <dd className="mt-1 font-medium wrap-anywhere text-stone-900">{book.isbn}</dd>
+            </div>
+            {book.publisher && (
+              <div>
+                <dt className="text-stone-600">Publisher</dt>
+                <dd className="mt-1 font-medium wrap-anywhere text-stone-900">{book.publisher}</dd>
+              </div>
+            )}
+            {book.publishedYear !== null && (
+              <div>
+                <dt className="text-stone-600">Publication year</dt>
+                <dd className="mt-1 font-medium text-stone-900">{book.publishedYear}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </div>
+    </article>
   );
 }
