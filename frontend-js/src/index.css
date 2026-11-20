@@ -109,38 +109,42 @@
   }
 
   .nav-link {
-    @apply inline-flex min-h-9 items-center rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-700;
+    @apply inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-700;
   }
 
   .nav-link:hover {
     @apply bg-teal-50 text-teal-800;
   }
 
+  .line-icon {
+    @apply size-4 shrink-0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .nav-link .line-icon {
+    @apply text-teal-700;
+  }
+
+  @media (width < 375px) {
+    .nav-link .line-icon {
+      display: none;
+    }
+  }
+
   .hero-books {
-    @apply flex items-end gap-1.5 self-center rounded-xl bg-teal-50 px-3 py-2 sm:gap-2 sm:px-6 sm:py-4;
+    @apply mx-auto h-[clamp(7rem,26vw,10rem)] w-[calc(100%-2rem)] rounded-xl object-cover shadow-xs sm:w-[calc(100%-3rem)];
+    object-position: 60% 75%;
   }
 
-  .hero-books::before,
-  .hero-books > span,
-  .hero-books::after {
-    @apply w-3.5 rounded-sm border-b-2 border-l-2 border-b-white/70 border-l-black/10 shadow-xs sm:w-5;
-  }
-
-  .hero-books::before,
-  .hero-books::after {
-    content: "";
-  }
-
-  .hero-books::before {
-    @apply h-7 bg-teal-200 sm:h-12;
-  }
-
-  .hero-books > span {
-    @apply h-9 bg-teal-700 sm:h-16;
-  }
-
-  .hero-books::after {
-    @apply h-8 origin-bottom-left rotate-8 bg-amber-200 sm:h-13;
+  @media (width >= 48rem) {
+    .hero-books {
+      @apply absolute inset-y-0 right-0 mx-0 h-full w-[62%] rounded-none shadow-none;
+      mask-image: linear-gradient(to right, transparent 2%, black 40%);
+    }
   }
 
   .book-cover {
@@ -195,6 +199,20 @@
     .table-scroll {
       max-width: 100%;
       overscroll-behavior-x: contain;
+    }
+  }
+
+  @media (width < 48rem) {
+    .site-navigation {
+      @apply mt-1 w-full max-w-full flex-col rounded-xl border border-gray-200 bg-gray-50 p-2;
+    }
+
+    .site-navigation .nav-link {
+      @apply min-h-11 px-3;
+    }
+
+    .site-navigation .nav-link .line-icon {
+      display: block;
     }
   }
 

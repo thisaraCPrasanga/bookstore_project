@@ -97,7 +97,14 @@ export default function AdminDashboard() {
       <div className="mt-5 grid gap-3 max-[360px]:grid-cols-1 min-[360px]:max-sm:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
 
         <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
-          <p className="text-sm font-medium text-gray-600">Total Orders</p>
+          <p className="flex items-center justify-between gap-1.5 text-sm font-medium text-gray-600">
+            Total Orders
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon text-teal-700 max-sm:size-3.5">
+              <path d="M9 5H6a1 1 0 0 0-1 1v14h14V6a1 1 0 0 0-1-1h-3" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <path d="M9 11h6m-6 4h6" />
+            </svg>
+          </p>
 
           <h2 className="mt-2 text-2xl font-bold tabular-nums">
             {stats.totalOrders}
@@ -105,7 +112,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
-          <p className="text-sm font-medium text-gray-600">Paid Orders</p>
+          <p className="flex items-center justify-between gap-1.5 text-sm font-medium text-gray-600">
+            Paid Orders
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon text-teal-700 max-sm:size-3.5">
+              <circle cx="12" cy="12" r="8" />
+              <path d="m8.5 12 2.5 2.5 4.5-5" />
+            </svg>
+          </p>
 
           <h2 className="mt-2 text-2xl font-bold text-teal-800 tabular-nums">
             {stats.paidOrders}
@@ -113,7 +126,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
-          <p className="text-sm font-medium text-gray-600">Total Sales</p>
+          <p className="flex items-center justify-between gap-1.5 text-sm font-medium text-gray-600">
+            Total Sales
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon text-teal-700 max-sm:size-3.5">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="M3 10h18M7 15h4" />
+            </svg>
+          </p>
 
           <h2 className="mt-2 text-2xl font-bold wrap-anywhere text-teal-800 tabular-nums">
             {stats.currency === "LKR" ? "Rs." : stats.currency}{" "}
@@ -122,7 +141,12 @@ export default function AdminDashboard() {
         </div>
 
         <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
-          <p className="text-sm font-medium text-gray-600">Low Stock Books</p>
+          <p className="flex items-center justify-between gap-1.5 text-sm font-medium text-gray-600">
+            Low Stock Books
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon text-red-700 max-sm:size-3.5">
+              <path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 14h13m-7-10v4m0 3h.01" />
+            </svg>
+          </p>
 
           <h2 className="mt-2 text-2xl font-bold text-red-700 tabular-nums">
             {lowStockCount}

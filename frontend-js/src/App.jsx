@@ -36,28 +36,26 @@ import AdminUsers from "./pages/AdminUsers";
 function HomePage() {
   return (
     <>
-      <section className="page-shell grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] justify-items-start gap-2 pb-0 sm:gap-x-5 sm:pb-0">
-        <h1 className="page-title col-span-2 sm:col-span-1">
-          Discover Your Next Favorite Book
-        </h1>
+      <section className="relative isolate overflow-hidden bg-gray-100 pb-4 md:pb-0">
+        <div className="page-shell relative z-10 flex max-w-6xl flex-col justify-center py-5 md:min-h-[clamp(14rem,16.67vw,20rem)] md:py-9">
+          <div className="md:max-w-[56%]">
+            <h1 className="page-title xl:text-4xl">
+              Discover Your Next Favorite Book
+            </h1>
 
-        <p className="col-span-2 row-start-2 text-sm text-gray-600 sm:col-span-1 sm:text-base">
-          Explore our collection of printed books and ebooks.
-        </p>
+            <p className="mt-3 text-sm text-gray-600 sm:text-base lg:text-lg">
+              Explore our collection of printed books and ebooks.
+            </p>
+          </div>
+        </div>
 
-        <a
-          href="#books"
-          className="button button-secondary col-start-1 row-start-3 self-center"
-        >
-          Browse Books
-        </a>
-
-        <span
-          aria-hidden="true"
-          className="hero-books col-start-2 row-start-3 sm:row-span-3 sm:row-start-1"
-        >
-          <span />
-        </span>
+        <img
+          src="/images/mbook-hero-books.webp"
+          alt="An open book, stacked hardcovers, and a mug on a sunlit library table"
+          width="1800"
+          height="600"
+          className="hero-books"
+        />
       </section>
 
       <section
@@ -121,6 +119,10 @@ function AppContent() {
 
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+  const [menuLocation, setMenuLocation] = useState(null);
+
+  // A new location closes the menu, including browser back and forward navigation.
+  const mobileMenuOpen = menuLocation === location;
 
   // Check Login Status
   useEffect(() => {
@@ -153,6 +155,14 @@ function AppContent() {
     };
   }, [location.pathname]);
 
+  function handleNavigationKeyDown(event) {
+    if (event.key === "Escape" && mobileMenuOpen) {
+      event.preventDefault();
+      setMenuLocation(null);
+      event.currentTarget.querySelector('button[aria-controls="site-navigation"]')?.focus();
+    }
+  }
+
   // Logout
   async function handleLogout() {
     setLoggingOut(true);
@@ -163,6 +173,7 @@ function AppContent() {
       await api.post("/users/logout", {});
 
       setUser(null);
+      setMenuLocation(null);
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -180,22 +191,48 @@ function AppContent() {
 
       {/* Navbar */}
       <header className="border-b border-gray-200 bg-white shadow-xs">
-        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 max-sm:py-2 sm:px-6">
+        <nav
+          aria-label="Main navigation"
+          onKeyDown={handleNavigationKeyDown}
+          className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 max-sm:py-2 sm:px-6"
+        >
 
           <Link
             to="/"
-            className="inline-flex min-h-9 items-center rounded-lg text-xl font-bold tracking-tight text-teal-800 sm:text-2xl"
+            className="inline-flex min-h-9 items-center gap-2 rounded-lg text-xl font-bold tracking-tight text-teal-800 sm:text-2xl"
           >
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon size-5">
+              <path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 14h13M9 7h6m-6 4h4" />
+            </svg>
             MBook
           </Link>
 
-          <div className="flex w-full flex-wrap items-center gap-1 max-sm:gap-y-0 max-lg:min-w-0 max-lg:max-w-full sm:w-auto">
+          <button
+            type="button"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="site-navigation"
+            onClick={() => setMenuLocation(mobileMenuOpen ? null : location)}
+            className="button button-secondary size-11 shrink-0 p-0 text-teal-700 md:hidden"
+          >
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon size-5">
+              <path d={mobileMenuOpen ? "m6 6 12 12M18 6 6 18" : "M5 6h14M5 12h14M5 18h14"} />
+            </svg>
+          </button>
+
+          <div
+            id="site-navigation"
+            className={`site-navigation gap-1 max-lg:min-w-0 max-lg:max-w-full md:flex md:w-auto md:flex-wrap md:items-center ${mobileMenuOpen ? "flex" : "hidden"}`}
+          >
 
             {/* Public Navigation */}
             <Link
               to="/books"
               className="nav-link"
             >
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                <path d="M12 6c-2.5-1.7-5.5-2.2-9-1v13c3.5-1.2 6.5-.7 9 1 2.5-1.7 5.5-2.2 9-1V5c-3.5-1.2-6.5-.7-9 1Zm0 0v13" />
+              </svg>
               Books
             </Link>
 
@@ -206,6 +243,11 @@ function AppContent() {
                   to="/cart"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M3 4h2l2.5 11h11l2-7H6" />
+                    <circle cx="9" cy="19" r="1" />
+                    <circle cx="17" cy="19" r="1" />
+                  </svg>
                   Cart
                 </Link>
 
@@ -280,7 +322,7 @@ function AppContent() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="button button-secondary ml-1 min-h-9 max-sm:min-h-11"
+                  className="button button-secondary ml-1 min-h-9 max-md:ml-0 max-md:min-h-11 max-md:justify-start max-md:px-3"
                 >
                   {loggingOut
                     ? "Logging out..."
@@ -293,6 +335,11 @@ function AppContent() {
                   to="/cart"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M3 4h2l2.5 11h11l2-7H6" />
+                    <circle cx="9" cy="19" r="1" />
+                    <circle cx="17" cy="19" r="1" />
+                  </svg>
                   Cart
                 </Link>
 
@@ -300,6 +347,9 @@ function AppContent() {
                   to="/login"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M13 4h6v16h-6M4 12h11m-4-4 4 4-4 4" />
+                  </svg>
                   Login
                 </Link>
 
@@ -307,6 +357,10 @@ function AppContent() {
                   to="/register"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <circle cx="9" cy="7" r="3" />
+                    <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m4-14v6m-3-3h6" />
+                  </svg>
                   Register
                 </Link>
               </>
