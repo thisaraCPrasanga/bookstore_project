@@ -6,12 +6,14 @@ import {
   Routes,
   Route,
   Link,
+  Navigate,
   useLocation,
   useNavigate,
 } from "react-router";
 
 import api from "./services/api";
 
+// Customer Pages
 import BookList from "./pages/BookList";
 import BookDetails from "./pages/BookDetails";
 import Login from "./pages/Login";
@@ -23,10 +25,17 @@ import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
 import MyEbooks from "./pages/MyEbooks";
 
+// Admin Pages
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminBooks from "./pages/AdminBooks";
+import AdminOrders from "./pages/AdminOrders";
+import AdminShipments from "./pages/AdminShipments";
+import AdminUsers from "./pages/AdminUsers";
+
+// Home Page
 function HomePage() {
   return (
     <>
-      {/* Hero Section */}
       <section className="bg-teal-700 px-6 py-20 text-center text-white">
         <h1 className="text-4xl font-bold">
           Discover Your Next Favorite Book
@@ -44,7 +53,6 @@ function HomePage() {
         </a>
       </section>
 
-      {/* Book Catalog */}
       <section
         id="books"
         className="mx-auto max-w-6xl px-6 py-12"
@@ -59,16 +67,55 @@ function HomePage() {
   );
 }
 
+// Protect Admin Pages
+function AdminRoute({ user, checkingUser, children }) {
+  if (checkingUser) {
+    return (
+      <p className="p-8 text-gray-600">
+        Checking admin access...
+      </p>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== "ADMIN") {
+    return (
+      <section className="mx-auto max-w-4xl px-6 py-12">
+        <h1 className="text-3xl font-bold text-red-600">
+          Access Denied
+        </h1>
+
+        <p className="mt-4 text-gray-600">
+          Only administrators can access this page.
+        </p>
+
+        <Link
+          to="/"
+          className="mt-5 inline-block text-teal-700 hover:underline"
+        >
+          Back to Home
+        </Link>
+      </section>
+    );
+  }
+
+  return children;
+}
+
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [user, setUser] = useState(null);
   const [checkingUser, setCheckingUser] = useState(true);
+
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
 
-  // Check login status
+  // Check Login Status
   useEffect(() => {
     let cancelled = false;
 
@@ -106,14 +153,16 @@ function AppContent() {
 
     try {
       await api.get("/auth/csrf");
-
       await api.post("/users/logout", {});
 
       setUser(null);
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
-      setLogoutError("Logout failed. Please try again.");
+
+      setLogoutError(
+        "Logout failed. Please try again."
+      );
     } finally {
       setLoggingOut(false);
     }
@@ -121,6 +170,7 @@ function AppContent() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
+
       {/* Navbar */}
       <header className="border-b border-gray-200 bg-white">
         <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
@@ -133,6 +183,8 @@ function AppContent() {
           </Link>
 
           <div className="flex flex-wrap items-center gap-5">
+
+            {/* Public Navigation */}
             <Link
               to="/books"
               className="text-gray-700 hover:text-teal-700"
@@ -140,16 +192,16 @@ function AppContent() {
               Books
             </Link>
 
-            <Link
-              to="/cart"
-              className="text-gray-700 hover:text-teal-700"
-            >
-              Cart
-            </Link>
-
-            {/* Customer Links */}
+            {/* Customer Navigation */}
             {user?.role === "CUSTOMER" && (
               <>
+                <Link
+                  to="/cart"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  Cart
+                </Link>
+
                 <Link
                   to="/my-orders"
                   className="text-gray-700 hover:text-teal-700"
@@ -166,6 +218,47 @@ function AppContent() {
               </>
             )}
 
+            {/* Admin Navigation */}
+            {user?.role === "ADMIN" && (
+              <>
+                <Link
+                  to="/admin"
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Dashboard
+                </Link>
+
+                <Link
+                  to="/admin/books"
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Manage Books
+                </Link>
+
+                <Link
+                  to="/admin/orders"
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Manage Orders
+                </Link>
+
+                <Link
+                  to="/admin/shipments"
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Manage Shipments
+                </Link>
+
+                <Link
+                  to="/admin/users"
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Manage Users
+                </Link>
+              </>
+            )}
+
+            {/* Authentication Navigation */}
             {checkingUser ? (
               <span className="text-gray-500">
                 Checking...
@@ -182,11 +275,20 @@ function AppContent() {
                   disabled={loggingOut}
                   className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
                 >
-                  {loggingOut ? "Logging out..." : "Logout"}
+                  {loggingOut
+                    ? "Logging out..."
+                    : "Logout"}
                 </button>
               </>
             ) : (
               <>
+                <Link
+                  to="/cart"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  Cart
+                </Link>
+
                 <Link
                   to="/login"
                   className="text-gray-700 hover:text-teal-700"
@@ -215,18 +317,14 @@ function AppContent() {
         )}
       </header>
 
-      {/* Pages */}
+      {/* Application Routes */}
       <main className="flex-1">
         <Routes>
-          <Route
-            path="/"
-            element={<HomePage />}
-          />
 
-          <Route
-            path="/books"
-            element={<HomePage />}
-          />
+          {/* Public Pages */}
+          <Route path="/" element={<HomePage />} />
+
+          <Route path="/books" element={<HomePage />} />
 
           <Route
             path="/books/:id"
@@ -243,6 +341,7 @@ function AppContent() {
             element={<Register />}
           />
 
+          {/* Customer Pages */}
           <Route
             path="/cart"
             element={<Cart />}
@@ -251,6 +350,21 @@ function AppContent() {
           <Route
             path="/checkout"
             element={<Checkout />}
+          />
+
+          <Route
+            path="/my-orders"
+            element={<MyOrders />}
+          />
+
+          <Route
+            path="/orders/:id"
+            element={<OrderDetails />}
+          />
+
+          <Route
+            path="/my-ebooks"
+            element={<MyEbooks />}
           />
 
           {/* Payment Pages */}
@@ -264,22 +378,71 @@ function AppContent() {
             element={<PaymentResult />}
           />
 
-          {/* Orders */}
+          {/* Admin Dashboard */}
           <Route
-            path="/my-orders"
-            element={<MyOrders />}
+            path="/admin"
+            element={
+              <AdminRoute
+                user={user}
+                checkingUser={checkingUser}
+              >
+                <AdminDashboard />
+              </AdminRoute>
+            }
           />
 
+          {/* Admin Book Management */}
           <Route
-            path="/orders/:id"
-            element={<OrderDetails />}
+            path="/admin/books"
+            element={
+              <AdminRoute
+                user={user}
+                checkingUser={checkingUser}
+              >
+                <AdminBooks />
+              </AdminRoute>
+            }
           />
 
-          {/* Ebook Downloads */}
+          {/* Admin Order Management */}
           <Route
-            path="/my-ebooks"
-            element={<MyEbooks />}
+            path="/admin/orders"
+            element={
+              <AdminRoute
+                user={user}
+                checkingUser={checkingUser}
+              >
+                <AdminOrders />
+              </AdminRoute>
+            }
           />
+
+          {/* Admin Shipment Management */}
+          <Route
+            path="/admin/shipments"
+            element={
+              <AdminRoute
+                user={user}
+                checkingUser={checkingUser}
+              >
+                <AdminShipments />
+              </AdminRoute>
+            }
+          />
+
+          {/* Admin User Management */}
+          <Route
+            path="/admin/users"
+            element={
+              <AdminRoute
+                user={user}
+                checkingUser={checkingUser}
+              >
+                <AdminUsers />
+              </AdminRoute>
+            }
+          />
+
         </Routes>
       </main>
 
