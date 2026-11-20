@@ -7,12 +7,12 @@ export default function PaymentResult() {
   const isCancelled = location.pathname === "/payment/cancel";
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center px-6 py-12">
-      <div className="w-full max-w-lg rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+    <section className="page-shell flex max-w-6xl justify-center">
+      <div className="surface w-full max-w-lg p-5 text-center sm:p-8">
 
         {isCancelled ? (
           <>
-            <h1 className="text-3xl font-bold text-red-600">
+            <h1 className="page-title text-red-700">
               Payment Cancelled
             </h1>
 
@@ -29,7 +29,7 @@ export default function PaymentResult() {
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-bold text-teal-700">
+            <h1 className="page-title text-teal-800">
               Payment Status
             </h1>
 
@@ -42,7 +42,7 @@ export default function PaymentResult() {
               by our server.
             </p>
 
-            <p className="mt-4 font-medium text-amber-700">
+            <p className="alert-warning mt-4">
               Returning from PayHere does not
               automatically mean your payment succeeded.
             </p>
@@ -52,7 +52,7 @@ export default function PaymentResult() {
         <div className="mt-8 border-t border-gray-200 pt-6">
           <Link
             to="/books"
-            className="inline-block rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800"
+            className="button button-primary"
           >
             Continue Shopping
           </Link>

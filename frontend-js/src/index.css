@@ -7,6 +7,12 @@
     font-family: system-ui, sans-serif;
   }
 
+  @media (width < 40rem) {
+    body {
+      min-width: 0;
+    }
+  }
+
   :where(a, button, input, select, textarea):focus-visible {
     outline: 2px solid var(--color-teal-700);
     outline-offset: 3px;
@@ -179,5 +185,33 @@
 
   .status-label {
     @apply inline-block rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-gray-700;
+  }
+
+  @media (width < 64rem) {
+    .page-shell {
+      overflow-wrap: anywhere;
+    }
+
+    .table-scroll {
+      max-width: 100%;
+      overscroll-behavior-x: contain;
+    }
+  }
+
+  @media (width < 40rem) {
+    .page-shell {
+      @apply py-5;
+    }
+
+    .button,
+    .nav-link,
+    .form-field,
+    .admin-book-form :is(input, select, textarea) {
+      @apply min-h-11 max-w-full;
+    }
+
+    .nav-link {
+      @apply px-2;
+    }
   }
 }

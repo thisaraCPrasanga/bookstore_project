@@ -141,13 +141,13 @@ export default function Checkout() {
   }
 
   if (loading) {
-    return <p className="p-8">Loading checkout...</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Loading checkout...</p>;
   }
 
   if (loginRequired) {
     return (
-      <section className="mx-auto max-w-3xl px-6 py-12">
-        <h1 className="text-3xl font-bold">Checkout</h1>
+      <section className="page-shell max-w-3xl">
+        <h1 className="page-title">Checkout</h1>
 
         <p className="mt-6">
           Please login to continue checkout.
@@ -155,7 +155,7 @@ export default function Checkout() {
 
         <Link
           to="/login"
-          className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+          className="button button-primary mt-5"
         >
           Login
         </Link>
@@ -166,10 +166,10 @@ export default function Checkout() {
   // Order created: show payment section
   if (order) {
     return (
-      <section className="mx-auto max-w-3xl px-6 py-12">
-        <div className="rounded-xl bg-white p-8 shadow-sm">
+      <section className="page-shell max-w-3xl">
+        <div className="surface p-5 sm:p-8">
 
-          <h1 className="text-3xl font-bold text-teal-700">
+          <h1 className="page-title text-teal-800">
             Order Created!
           </h1>
 
@@ -178,7 +178,7 @@ export default function Checkout() {
             Please complete the payment.
           </p>
 
-          <div className="mt-8 space-y-4">
+          <div className="mt-5 space-y-4">
             <p>
               <strong>Order Number:</strong>{" "}
               {order.orderNumber}
@@ -214,7 +214,7 @@ export default function Checkout() {
             </p>
 
             {paymentError && (
-              <p role="alert" className="mt-4 text-red-600">
+              <p role="alert" className="alert-error mt-4">
                 {paymentError}
               </p>
             )}
@@ -224,7 +224,7 @@ export default function Checkout() {
                 type="button"
                 onClick={handlePreparePayment}
                 disabled={preparingPayment}
-                className="mt-6 w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                className="button button-primary mt-6 w-full"
               >
                 {preparingPayment
                   ? "Preparing Payment..."
@@ -257,7 +257,7 @@ export default function Checkout() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800"
+                  className="button button-primary w-full"
                 >
                   Continue to PayHere
                 </button>
@@ -283,13 +283,13 @@ export default function Checkout() {
 
   // Checkout form
   return (
-    <section className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-3xl font-bold">
+    <section className="page-shell max-w-4xl">
+      <h1 className="page-title">
         Checkout
       </h1>
 
       {error && (
-        <p role="alert" className="mt-6 rounded-lg bg-red-50 p-4 text-red-700">
+        <p role="alert" className="alert-error mt-5">
           {error}
         </p>
       )}
@@ -297,7 +297,7 @@ export default function Checkout() {
       {!cart ? (
         <p className="mt-6">Checkout is unavailable.</p>
       ) : cart.items.length === 0 ? (
-        <div className="mt-8 rounded-xl bg-white p-8">
+        <div className="surface mt-5 p-5 sm:p-6">
           <p>Your cart is empty.</p>
 
           <Link
@@ -308,18 +308,18 @@ export default function Checkout() {
           </Link>
         </div>
       ) : (
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
+        <div className="mt-5 grid items-start gap-4 max-md:grid-cols-1 md:grid-cols-[minmax(0,1fr)_16rem] md:gap-5">
 
           <form
             onSubmit={handlePlaceOrder}
-            className="space-y-5 rounded-xl bg-white p-6 shadow-sm md:col-span-2"
+            className="surface min-w-0 space-y-4 p-4 max-sm:space-y-3 sm:p-6"
           >
             <h2 className="text-xl font-bold">
               Billing / Delivery Details
             </h2>
 
             <div>
-              <label htmlFor="fullName" className="mb-2 block font-medium">
+              <label htmlFor="fullName" className="form-label">
                 Full Name
               </label>
 
@@ -331,12 +331,12 @@ export default function Checkout() {
                 autoComplete="name"
                 value={form.fullName}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="mb-2 block font-medium">
+              <label htmlFor="phone" className="form-label">
                 Phone Number
               </label>
 
@@ -350,12 +350,12 @@ export default function Checkout() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="0771234567"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="addressLine1" className="mb-2 block font-medium">
+              <label htmlFor="addressLine1" className="form-label">
                 Address Line 1
               </label>
 
@@ -367,12 +367,12 @@ export default function Checkout() {
                 autoComplete="address-line1"
                 value={form.addressLine1}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="addressLine2" className="mb-2 block font-medium">
+              <label htmlFor="addressLine2" className="form-label">
                 Address Line 2 (Optional)
               </label>
 
@@ -383,12 +383,12 @@ export default function Checkout() {
                 autoComplete="address-line2"
                 value={form.addressLine2}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="city" className="mb-2 block font-medium">
+              <label htmlFor="city" className="form-label">
                 City
               </label>
 
@@ -400,12 +400,12 @@ export default function Checkout() {
                 autoComplete="address-level2"
                 value={form.city}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="postalCode" className="mb-2 block font-medium">
+              <label htmlFor="postalCode" className="form-label">
                 Postal Code (Optional)
               </label>
 
@@ -416,12 +416,12 @@ export default function Checkout() {
                 autoComplete="postal-code"
                 value={form.postalCode}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <div>
-              <label htmlFor="country" className="mb-2 block font-medium">
+              <label htmlFor="country" className="form-label">
                 Country
               </label>
 
@@ -430,21 +430,21 @@ export default function Checkout() {
                 name="country"
                 value={form.country}
                 readOnly
-                className="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-3"
+                className="form-field w-full"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+              className="button button-primary w-full"
             >
               {submitting ? "Placing Order..." : "Place Order"}
             </button>
           </form>
 
           {/* Cart Summary */}
-          <div className="h-fit rounded-xl bg-white p-6 shadow-sm">
+          <div className="surface p-4 sm:p-6">
             <h2 className="text-xl font-bold">
               Order Summary
             </h2>

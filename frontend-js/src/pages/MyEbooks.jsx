@@ -55,13 +55,13 @@ export default function MyEbooks() {
   }, []);
 
   if (loading) {
-    return <p className="p-8">Loading your ebooks...</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Loading your ebooks...</p>;
   }
 
   if (loginRequired) {
     return (
-      <section className="mx-auto max-w-5xl px-6 py-12">
-        <h1 className="text-3xl font-bold">My Ebooks</h1>
+      <section className="page-shell max-w-5xl">
+        <h1 className="page-title">My Ebooks</h1>
 
         <p className="mt-6">
           Please login to access your ebooks.
@@ -69,7 +69,7 @@ export default function MyEbooks() {
 
         <Link
           to="/login"
-          className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+          className="button button-primary mt-5"
         >
           Login
         </Link>
@@ -78,8 +78,8 @@ export default function MyEbooks() {
   }
 
   return (
-    <section className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900">
+    <section className="page-shell max-w-5xl">
+      <h1 className="page-title">
         My Ebooks
       </h1>
 
@@ -90,14 +90,14 @@ export default function MyEbooks() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
       )}
 
       {!error && ebooks.length === 0 && (
-        <div className="mt-8 rounded-xl bg-white p-8 text-center shadow-sm">
+        <div className="surface mt-5 p-6 text-center sm:p-8">
           <p className="text-gray-600">
             No ebook downloads available yet.
           </p>
@@ -110,7 +110,7 @@ export default function MyEbooks() {
 
           <Link
             to="/books"
-            className="mt-6 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+            className="button button-primary mt-6"
           >
             Browse Books
           </Link>
@@ -118,7 +118,7 @@ export default function MyEbooks() {
       )}
 
       {!error && ebooks.length > 0 && (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {ebooks.map((ebook) => {
   const expired = ebook.expired;
 
@@ -128,7 +128,7 @@ export default function MyEbooks() {
             return (
               <div
                 key={ebook.token}
-                className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                className="surface min-w-0 p-4 wrap-anywhere sm:p-6"
               >
                 <h2 className="text-xl font-bold text-gray-900">
                   {ebook.bookTitle}
@@ -159,7 +159,7 @@ export default function MyEbooks() {
                 {canDownload ? (
                   <a
                     href={`/api/v1/downloads/${ebook.token}`}
-                    className="mt-6 inline-block rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800"
+                    className="button button-primary mt-6"
                   >
                     Download Ebook
                   </a>
@@ -167,7 +167,7 @@ export default function MyEbooks() {
                   <button
                     type="button"
                     disabled
-                    className="mt-6 rounded-lg bg-gray-400 px-6 py-3 font-semibold text-white"
+                    className="button button-secondary mt-6"
                   >
                     Download Unavailable
                   </button>

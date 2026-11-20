@@ -61,8 +61,8 @@ export default function MyOrders() {
 
   if (loginRequired) {
     return (
-      <section className="mx-auto max-w-5xl px-6 py-12">
-        <h1 className="text-3xl font-bold">
+      <section className="page-shell max-w-5xl">
+        <h1 className="page-title">
           My Orders
         </h1>
 
@@ -72,7 +72,7 @@ export default function MyOrders() {
 
         <Link
           to="/login"
-          className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+          className="button button-primary mt-5 max-sm:w-full"
         >
           Login
         </Link>
@@ -81,8 +81,8 @@ export default function MyOrders() {
   }
 
   return (
-    <section className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900">
+    <section className="page-shell max-w-5xl">
+      <h1 className="page-title">
         My Orders
       </h1>
 
@@ -101,7 +101,7 @@ export default function MyOrders() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
@@ -109,14 +109,14 @@ export default function MyOrders() {
 
       {/* Empty Orders */}
       {!loading && !error && orders.length === 0 && (
-        <div className="mt-8 rounded-xl bg-white p-8 text-center">
+        <div className="surface mt-5 p-6 text-center sm:p-8">
           <p className="text-gray-600">
             You have not placed any orders yet.
           </p>
 
           <Link
             to="/books"
-            className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+            className="button button-primary mt-5 max-sm:w-full"
           >
             Browse Books
           </Link>
@@ -126,11 +126,11 @@ export default function MyOrders() {
       {/* Orders List */}
       {!loading && !error && orders.length > 0 && (
         <>
-          <div className="mt-8 space-y-5">
+          <div className="mt-6 space-y-4">
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                className="surface min-w-0 p-4 wrap-anywhere sm:p-6"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -144,7 +144,7 @@ export default function MyOrders() {
                     </p>
                   </div>
 
-                  <span className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
+                  <span className="status-label">
                     {order.status.replaceAll("_", " ")}
                   </span>
                 </div>
@@ -176,7 +176,7 @@ export default function MyOrders() {
                   {/* View Details Button */}
                   <Link
                     to={`/orders/${order.id}`}
-                    className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800"
+                    className="button button-primary mt-5 max-sm:w-full"
                   >
                     View Details
                   </Link>
@@ -187,12 +187,12 @@ export default function MyOrders() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-4">
+            <div className="pagination">
               <button
                 type="button"
                 disabled={page === 0 || loading}
                 onClick={() => setPage(page - 1)}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 disabled:opacity-40"
+                className="button button-secondary"
               >
                 Previous
               </button>
@@ -205,7 +205,7 @@ export default function MyOrders() {
                 type="button"
                 disabled={page >= totalPages - 1 || loading}
                 onClick={() => setPage(page + 1)}
-                className="rounded-lg bg-teal-700 px-4 py-2 text-white disabled:opacity-40"
+                className="button button-primary"
               >
                 Next
               </button>

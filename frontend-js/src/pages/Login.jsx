@@ -39,7 +39,7 @@ export default function Login() {
 
   return (
     <section className="page-shell flex max-w-6xl justify-center">
-      <div className="surface w-full max-w-md p-5 sm:p-8">
+      <div className="surface w-full max-w-md p-5 max-sm:p-4 sm:p-8">
 
         <h1 className="page-title text-center">
           Welcome Back
@@ -55,7 +55,7 @@ export default function Login() {
           </p>
         )}
 
-        <form onSubmit={handleLogin} className="mt-6 space-y-4">
+        <form onSubmit={handleLogin} className="mt-6 space-y-4 max-sm:mt-5 max-sm:space-y-3">
 
           <div>
             <label htmlFor="email" className="form-label">

@@ -87,7 +87,7 @@ export default function BookList() {
       {/* Search and Filters */}
       <form
         onSubmit={handleSearch}
-        className="surface mt-3 grid min-w-0 items-end gap-3 p-3 sm:grid-cols-3 sm:p-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto]"
+        className="surface mt-3 grid min-w-0 items-end gap-3 p-3 max-sm:grid-cols-1 sm:grid-cols-3 sm:p-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto]"
       >
         <div>
           <label
@@ -153,7 +153,7 @@ export default function BookList() {
           </select>
         </div>
 
-        <div className="flex flex-wrap gap-2 sm:col-span-3 lg:col-span-1">
+        <div className="flex flex-wrap gap-2 max-sm:grid max-sm:grid-cols-2 max-sm:*:px-2 sm:col-span-3 lg:col-span-1">
           <button
             type="submit"
             className="button button-primary"

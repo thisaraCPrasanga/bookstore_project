@@ -274,7 +274,7 @@ export default function AdminBooks() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10">
+    <section className="page-shell max-w-6xl">
 
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -286,7 +286,7 @@ export default function AdminBooks() {
             ← Admin Dashboard
           </Link>
 
-          <h1 className="mt-3 text-3xl font-bold">
+          <h1 className="mt-2 text-2xl font-bold tabular-nums">
             Manage Books
           </h1>
 
@@ -298,7 +298,7 @@ export default function AdminBooks() {
         <button
           type="button"
           onClick={handleAdd}
-          className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800"
+          className="button button-primary"
         >
           + Add Book
         </button>
@@ -308,7 +308,7 @@ export default function AdminBooks() {
       {message && (
         <p
           role="status"
-          className="mt-6 rounded-lg bg-green-50 p-4 text-green-700"
+          className="alert-success mt-5"
         >
           {message}
         </p>
@@ -317,7 +317,7 @@ export default function AdminBooks() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
@@ -327,16 +327,16 @@ export default function AdminBooks() {
       {showForm && (
         <form
           onSubmit={handleSave}
-          className="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+          className="surface admin-book-form mt-5 p-4 sm:p-6"
         >
           <h2 className="text-xl font-bold">
             {editingBook ? "Edit Book" : "Add New Book"}
           </h2>
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="mt-6 grid gap-5 max-sm:gap-4 max-md:grid-cols-1 max-lg:*:min-w-0 md:grid-cols-2">
 
             <label className="block">
-              <span className="mb-2 block">ISBN *</span>
+              <span className="form-label">ISBN *</span>
               <input
                 name="isbn"
                 value={form.isbn}
@@ -348,7 +348,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Title *</span>
+              <span className="form-label">Title *</span>
               <input
                 name="title"
                 value={form.title}
@@ -360,7 +360,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Author *</span>
+              <span className="form-label">Author *</span>
               <input
                 name="author"
                 value={form.author}
@@ -372,7 +372,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Genre *</span>
+              <span className="form-label">Genre *</span>
               <select
                 name="genre"
                 value={form.genre}
@@ -388,7 +388,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Format *</span>
+              <span className="form-label">Format *</span>
               <select
                 name="format"
                 value={form.format}
@@ -412,7 +412,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Price (LKR) *</span>
+              <span className="form-label">Price (LKR) *</span>
               <input
                 type="number"
                 name="price"
@@ -426,7 +426,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Publisher</span>
+              <span className="form-label">Publisher</span>
               <input
                 name="publisher"
                 value={form.publisher}
@@ -437,7 +437,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block">Published Year</span>
+              <span className="form-label">Published Year</span>
               <input
                 type="number"
                 name="publishedYear"
@@ -452,7 +452,7 @@ export default function AdminBooks() {
 
             {form.format === "PHYSICAL" ? (
               <label className="block">
-                <span className="mb-2 block">Stock *</span>
+                <span className="form-label">Stock *</span>
                 <input
                   type="number"
                   name="stock"
@@ -466,7 +466,7 @@ export default function AdminBooks() {
               </label>
             ) : (
               <label className="block">
-                <span className="mb-2 block">
+                <span className="form-label">
                   Ebook File Key
                 </span>
                 <input
@@ -484,7 +484,7 @@ export default function AdminBooks() {
             )}
 
             <label className="block md:col-span-2">
-              <span className="mb-2 block">
+              <span className="form-label">
                 Cover Image HTTPS URL
               </span>
               <input
@@ -499,7 +499,7 @@ export default function AdminBooks() {
             </label>
 
             <label className="block md:col-span-2">
-              <span className="mb-2 block">Description</span>
+              <span className="form-label">Description</span>
               <textarea
                 name="description"
                 value={form.description}
@@ -511,11 +511,11 @@ export default function AdminBooks() {
             </label>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3 max-sm:grid max-sm:grid-cols-2">
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+              className="button button-primary"
             >
               {saving
                 ? "Saving..."
@@ -531,7 +531,7 @@ export default function AdminBooks() {
                 setEditingBook(null);
               }}
               disabled={saving}
-              className="rounded-lg border border-gray-300 px-6 py-3 hover:bg-gray-100"
+              className="button button-secondary"
             >
               Cancel
             </button>
@@ -542,7 +542,7 @@ export default function AdminBooks() {
       {/* Search */}
       <form
         onSubmit={handleSearch}
-        className="mt-8 flex flex-wrap gap-3"
+        className="surface mt-5 flex flex-wrap gap-2.5 p-3 max-sm:flex-col"
       >
         <input
           type="search"
@@ -551,27 +551,27 @@ export default function AdminBooks() {
             setSearchInput(event.target.value)
           }
           placeholder="Search books by title..."
-          className="min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3"
+          className="form-field grow basis-48 max-sm:basis-auto"
         />
 
         <button
           type="submit"
-          className="rounded-lg bg-teal-700 px-6 py-3 text-white hover:bg-teal-800"
+          className="button button-primary"
         >
           Search
         </button>
       </form>
 
       {/* Book List */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-100">
+      <div className="surface table-scroll mt-5">
+        <table className="admin-table">
+          <thead className="border-b border-gray-200">
             <tr>
-              <th className="p-4">Book</th>
-              <th className="p-4">Format</th>
-              <th className="p-4">Price</th>
-              <th className="p-4">Stock</th>
-              <th className="p-4">Actions</th>
+              <th className="px-4 py-3">Book</th>
+              <th className="px-4 py-3">Format</th>
+              <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Stock</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
 
@@ -594,7 +594,7 @@ export default function AdminBooks() {
                   key={book.id}
                   className="border-t border-gray-200"
                 >
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     <p className="font-semibold">
                       {book.title}
                     </p>
@@ -603,27 +603,27 @@ export default function AdminBooks() {
                     </p>
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     {book.format}
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     Rs. {Number(book.price).toFixed(2)}
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     {book.format === "PHYSICAL"
                       ? book.stock
                       : "N/A"}
                   </td>
 
-                  <td className="p-4">
-                    <div className="flex gap-3">
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => handleEdit(book)}
                         disabled={book.format === "EBOOK"}
-                        className="font-medium text-teal-700 hover:underline disabled:cursor-not-allowed disabled:opacity-40"
+                        className="button button-secondary"
                         title={
                           book.format === "EBOOK"
                             ? "Ebook editing needs backend file-key support"
@@ -637,7 +637,7 @@ export default function AdminBooks() {
                         type="button"
                         onClick={() => handleHide(book)}
                         disabled={hidingId !== null}
-                        className="font-medium text-red-600 hover:underline disabled:opacity-40"
+                        className="button button-danger"
                       >
                         {hidingId === book.id
                           ? "Hiding..."
@@ -654,12 +654,12 @@ export default function AdminBooks() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-4">
+        <div className="pagination">
           <button
             type="button"
             disabled={page === 0 || loading}
             onClick={() => setPage((value) => value - 1)}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 disabled:opacity-40"
+            className="button button-secondary"
           >
             Previous
           </button>
@@ -672,7 +672,7 @@ export default function AdminBooks() {
             type="button"
             disabled={page >= totalPages - 1 || loading}
             onClick={() => setPage((value) => value + 1)}
-            className="rounded-lg bg-teal-700 px-4 py-2 text-white disabled:opacity-40"
+            className="button button-primary"
           >
             Next
           </button>
