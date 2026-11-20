@@ -88,26 +88,26 @@ export default function BookDetails() {
   }
 
   if (loading) {
-    return <p className="p-8">Loading book details...</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Loading book details...</p>;
   }
 
   if (error) {
     return (
-      <p role="alert" className="p-8 text-red-600">
+      <p role="alert" className="alert-error mx-4 my-6 lg:mx-auto lg:max-w-4xl">
         {error}
       </p>
     );
   }
 
   if (!book) {
-    return <p className="p-8">Book not found.</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Book not found.</p>;
   }
 
   const outOfStock =
     book.format === "PHYSICAL" && book.stock <= 0;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="page-shell max-w-6xl">
       <Link
         to="/books"
         className="text-teal-700 hover:underline"
@@ -115,26 +115,18 @@ export default function BookDetails() {
         ← Back to Books
       </Link>
 
-      <div className="mt-8 grid gap-10 md:grid-cols-2">
+      <div className="mt-4 grid items-start gap-4 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-6">
 
         {/* Book Cover */}
-        <div className="flex items-center justify-center rounded-xl bg-gray-100 p-8">
-          {book.coverImageUrl ? (
-            <img
-              src={book.coverImageUrl}
-              alt={book.title}
-              className="max-h-96 object-contain"
-            />
-          ) : (
-            <p className="text-gray-500">
-              No Cover Available
-            </p>
+        <div className="surface book-cover h-72 p-5 sm:h-104 sm:p-7">
+          {book.coverImageUrl && (
+            <img src={book.coverImageUrl} alt="" />
           )}
         </div>
 
         {/* Book Information */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="page-title">
             {book.title}
           </h1>
 
@@ -142,7 +134,7 @@ export default function BookDetails() {
             By {book.author}
           </p>
 
-          <p className="mt-6 text-2xl font-bold text-teal-700">
+          <p className="mt-4 text-2xl font-bold text-teal-800">
             Rs. {Number(book.price).toFixed(2)}
           </p>
 
@@ -185,7 +177,7 @@ export default function BookDetails() {
               type="button"
               onClick={handleAddToCart}
               disabled={adding || outOfStock}
-              className="rounded-lg bg-teal-700 px-8 py-3 font-semibold text-white hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="button button-primary w-full sm:w-auto"
             >
               {outOfStock
                 ? "Out of Stock"
@@ -197,7 +189,7 @@ export default function BookDetails() {
             {cartError && (
               <p
                 role="alert"
-                className="mt-4 text-red-600"
+                className="alert-error mt-4"
               >
                 {cartError}
               </p>
@@ -220,7 +212,7 @@ export default function BookDetails() {
                 About This Book
               </h2>
 
-              <p className="mt-3 whitespace-pre-line text-gray-600">
+              <p className="mt-2 leading-relaxed whitespace-pre-line text-gray-600">
                 {book.description}
               </p>
             </div>

@@ -46,17 +46,17 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading) {
-    return <p className="p-8">Loading Dashboard...</p>;
+    return <p className="page-shell max-w-6xl text-sm text-gray-600">Loading Dashboard...</p>;
   }
 
   if (error) {
     return (
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        <h1 className="text-3xl font-bold">
+      <section className="page-shell max-w-6xl">
+        <h1 className="page-title">
           Admin Dashboard
         </h1>
 
-        <p role="alert" className="mt-6 text-red-600">
+        <p role="alert" className="alert-error mt-5">
           {error}
         </p>
 
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   }
 
   if (!stats) {
-    return <p className="p-8">Dashboard unavailable.</p>;
+    return <p className="page-shell max-w-6xl text-sm text-gray-600">Dashboard unavailable.</p>;
   }
 
   const pendingOrders =
@@ -80,64 +80,64 @@ export default function AdminDashboard() {
   const lowStockCount = stats.lowStockBooks.length;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="page-shell max-w-6xl">
 
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="page-title">
           Admin Dashboard
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Welcome to MuchLogic Bookstore Administration
+          Welcome to MBook Administration
         </p>
       </div>
 
       {/* Statistics Cards */}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <p className="text-gray-500">Total Orders</p>
+        <div className="surface min-w-0 p-4 sm:p-5">
+          <p className="text-sm font-medium text-gray-600">Total Orders</p>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900">
+          <h2 className="mt-2 text-2xl font-bold tabular-nums">
             {stats.totalOrders}
           </h2>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <p className="text-gray-500">Paid Orders</p>
+        <div className="surface min-w-0 p-4 sm:p-5">
+          <p className="text-sm font-medium text-gray-600">Paid Orders</p>
 
-          <h2 className="mt-3 text-3xl font-bold text-teal-700">
+          <h2 className="mt-2 text-2xl font-bold text-teal-800 tabular-nums">
             {stats.paidOrders}
           </h2>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <p className="text-gray-500">Total Sales</p>
+        <div className="surface min-w-0 p-4 sm:p-5">
+          <p className="text-sm font-medium text-gray-600">Total Sales</p>
 
-          <h2 className="mt-3 text-2xl font-bold text-teal-700">
+          <h2 className="mt-2 text-2xl font-bold wrap-anywhere text-teal-800 tabular-nums">
             {stats.currency === "LKR" ? "Rs." : stats.currency}{" "}
             {Number(stats.totalSales).toFixed(2)}
           </h2>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <p className="text-gray-500">Low Stock Books</p>
+        <div className="surface min-w-0 p-4 sm:p-5">
+          <p className="text-sm font-medium text-gray-600">Low Stock Books</p>
 
-          <h2 className="mt-3 text-3xl font-bold text-red-600">
+          <h2 className="mt-2 text-2xl font-bold text-red-700 tabular-nums">
             {lowStockCount}
           </h2>
         </div>
       </div>
 
       {/* Orders Summary */}
-      <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+      <div className="surface mt-5 p-4 sm:p-6">
         <h2 className="text-xl font-bold">
           Orders Summary
         </h2>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg bg-amber-50 p-5">
+          <div className="rounded-lg border border-amber-100 bg-amber-50 p-4">
             <p className="text-gray-600">
               Pending Payments
             </p>
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
             </p>
           </div>
 
-          <div className="rounded-lg bg-gray-100 p-5">
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
             <p className="text-gray-600">
               Processing Orders
             </p>
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Low Stock Books */}
-      <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+      <div className="surface mt-5 p-4 sm:p-6">
         <h2 className="text-xl font-bold">
           Low Stock Alerts
         </h2>
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
             {stats.lowStockBooks.map((book) => (
               <div
                 key={book.bookId}
-                className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-4"
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-3 wrap-anywhere last:border-0 last:pb-0"
               >
                 <div>
                   <Link
@@ -194,7 +194,7 @@ export default function AdminDashboard() {
                   </p>
                 </div>
 
-                <span className="rounded-lg bg-red-50 px-4 py-2 font-medium text-red-700">
+                <span className="status-label bg-red-50 text-red-800">
                   Stock: {book.stock}
                 </span>
               </div>

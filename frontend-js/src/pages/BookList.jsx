@@ -34,7 +34,7 @@ export default function BookList() {
             author,
             genre,
             page,
-            size: 6,
+            size: 16,
           },
         });
 
@@ -87,12 +87,12 @@ export default function BookList() {
       {/* Search and Filters */}
       <form
         onSubmit={handleSearch}
-        className="mt-6 grid gap-4 rounded-xl border border-gray-200 bg-white p-5 md:grid-cols-3"
+        className="surface mt-3 grid min-w-0 items-end gap-3 p-3 sm:grid-cols-3 sm:p-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto]"
       >
         <div>
           <label
             htmlFor="title"
-            className="mb-2 block font-medium"
+            className="form-label"
           >
             Book Title
           </label>
@@ -103,14 +103,14 @@ export default function BookList() {
             value={titleInput}
             onChange={(event) => setTitleInput(event.target.value)}
             placeholder="Search by title"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3"
+            className="form-field w-full bg-gray-50"
           />
         </div>
 
         <div>
           <label
             htmlFor="author"
-            className="mb-2 block font-medium"
+            className="form-label"
           >
             Author
           </label>
@@ -121,14 +121,14 @@ export default function BookList() {
             value={authorInput}
             onChange={(event) => setAuthorInput(event.target.value)}
             placeholder="Search by author"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3"
+            className="form-field w-full bg-gray-50"
           />
         </div>
 
         <div>
           <label
             htmlFor="genre"
-            className="mb-2 block font-medium"
+            className="form-label"
           >
             Genre
           </label>
@@ -137,7 +137,7 @@ export default function BookList() {
             id="genre"
             value={genreInput}
             onChange={(event) => setGenreInput(event.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3"
+            className="form-field w-full bg-gray-50"
           >
             <option value="">All Genres</option>
             <option value="FICTION">Fiction</option>
@@ -153,10 +153,10 @@ export default function BookList() {
           </select>
         </div>
 
-        <div className="flex gap-3 md:col-span-3">
+        <div className="flex flex-wrap gap-2 sm:col-span-3 lg:col-span-1">
           <button
             type="submit"
-            className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
+            className="button button-primary"
           >
             Search Books
           </button>
@@ -164,7 +164,7 @@ export default function BookList() {
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded-lg border border-gray-300 px-6 py-3 hover:bg-gray-100"
+            className="button button-secondary"
           >
             Clear Filters
           </button>
@@ -173,21 +173,21 @@ export default function BookList() {
 
       {/* Loading */}
       {loading && (
-        <p className="mt-6 text-gray-600">
+        <p className="surface mt-4 px-4 py-5 text-sm text-gray-600">
           Loading books...
         </p>
       )}
 
       {/* Error */}
       {error && (
-        <p role="alert" className="mt-6 text-red-600">
+        <p role="alert" className="alert-error mt-4">
           {error}
         </p>
       )}
 
       {/* Empty Results */}
       {!loading && !error && books.length === 0 && (
-        <p className="mt-6 text-gray-600">
+        <p className="surface mt-4 px-4 py-5 text-sm text-gray-600">
           No books found.
         </p>
       )}
@@ -195,44 +195,38 @@ export default function BookList() {
       {/* Book Cards */}
       {!loading && !error && (
         <>
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-4 empty:hidden sm:grid-cols-2 lg:grid-cols-4">
             {books.map((book) => (
               <div
                 key={book.id}
-                className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                className="surface flex min-w-0 flex-col p-3.5"
               >
-                {book.coverImageUrl ? (
-                  <img
-                    src={book.coverImageUrl}
-                    alt={book.title}
-                    className="mx-auto h-48 w-32 object-contain"
-                  />
-                ) : (
-                  <div className="mx-auto flex h-48 w-32 items-center justify-center rounded bg-gray-100 text-sm text-gray-500">
-                    No Cover
-                  </div>
-                )}
+                <div className="book-cover">
+                  {book.coverImageUrl && (
+                    <img src={book.coverImageUrl} alt="" />
+                  )}
+                </div>
 
-                <h3 className="mt-4 text-lg font-bold">
+                <h3 className="mt-3 text-base leading-snug font-semibold wrap-anywhere">
                   {book.title}
                 </h3>
 
-                <p className="mt-1 text-gray-600">
+                <p className="mt-1 text-sm wrap-anywhere text-gray-600">
                   {book.author}
                 </p>
 
-                <p className="mt-3 font-semibold text-teal-700">
+                <p className="mt-3 font-bold text-teal-800">
                   Rs. {Number(book.price).toFixed(2)}
                 </p>
 
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mt-1.5 text-xs text-gray-600 last-of-type:mb-3">
                   {book.format === "EBOOK"
                     ? "Ebook"
                     : "Printed Book"}
                 </p>
 
                 {book.format === "PHYSICAL" && (
-                  <p className="mt-2 text-sm">
+                  <p className="mt-1 text-xs text-gray-600 last-of-type:mb-3">
                     {book.stock > 0
                       ? "In Stock"
                       : "Out of Stock"}
@@ -241,7 +235,7 @@ export default function BookList() {
 
                 <Link
                   to={`/books/${book.id}`}
-                  className="mt-5 inline-block rounded-lg bg-teal-700 px-5 py-2 text-white hover:bg-teal-800"
+                  className="button button-primary mt-auto w-full rounded-full"
                 >
                   View Details
                 </Link>
@@ -251,12 +245,12 @@ export default function BookList() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-4">
+            <div className="pagination">
               <button
                 type="button"
                 disabled={page === 0 || loading}
                 onClick={() => setPage(page - 1)}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 disabled:opacity-40"
+                className="button button-secondary"
               >
                 Previous
               </button>
@@ -269,7 +263,7 @@ export default function BookList() {
                 type="button"
                 disabled={page >= totalPages - 1 || loading}
                 onClick={() => setPage(page + 1)}
-                className="rounded-lg bg-teal-700 px-4 py-2 text-white disabled:opacity-40"
+                className="button button-primary"
               >
                 Next
               </button>

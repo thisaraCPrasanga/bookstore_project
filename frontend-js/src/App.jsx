@@ -36,28 +36,35 @@ import AdminUsers from "./pages/AdminUsers";
 function HomePage() {
   return (
     <>
-      <section className="bg-teal-700 px-6 py-20 text-center text-white">
-        <h1 className="text-4xl font-bold">
+      <section className="page-shell grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] justify-items-start gap-2 pb-0 sm:gap-x-5 sm:pb-0">
+        <h1 className="page-title col-span-2 sm:col-span-1">
           Discover Your Next Favorite Book
         </h1>
 
-        <p className="mt-4 text-lg text-teal-100">
+        <p className="col-span-2 row-start-2 text-sm text-gray-600 sm:col-span-1 sm:text-base">
           Explore our collection of printed books and ebooks.
         </p>
 
         <a
           href="#books"
-          className="mt-8 inline-block rounded-lg bg-white px-6 py-3 font-semibold text-teal-800 hover:bg-gray-100"
+          className="button button-secondary col-start-1 row-start-3 self-center"
         >
           Browse Books
         </a>
+
+        <span
+          aria-hidden="true"
+          className="hero-books col-start-2 row-start-3 sm:row-span-3 sm:row-start-1"
+        >
+          <span />
+        </span>
       </section>
 
       <section
         id="books"
-        className="mx-auto max-w-6xl px-6 py-12"
+        className="page-shell max-w-6xl pt-5 sm:pt-6"
       >
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
           Our Books
         </h2>
 
@@ -71,7 +78,7 @@ function HomePage() {
 function AdminRoute({ user, checkingUser, children }) {
   if (checkingUser) {
     return (
-      <p className="p-8 text-gray-600">
+      <p className="page-shell max-w-6xl text-sm text-gray-600">
         Checking admin access...
       </p>
     );
@@ -83,18 +90,18 @@ function AdminRoute({ user, checkingUser, children }) {
 
   if (user.role !== "ADMIN") {
     return (
-      <section className="mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-3xl font-bold text-red-600">
+      <section className="page-shell max-w-4xl">
+        <h1 className="page-title text-red-700">
           Access Denied
         </h1>
 
-        <p className="mt-4 text-gray-600">
+        <p className="mt-3 text-gray-600">
           Only administrators can access this page.
         </p>
 
         <Link
           to="/"
-          className="mt-5 inline-block text-teal-700 hover:underline"
+          className="button button-secondary mt-5"
         >
           Back to Home
         </Link>
@@ -169,25 +176,25 @@ function AppContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-100">
 
       {/* Navbar */}
-      <header className="border-b border-gray-200 bg-white">
-        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+      <header className="border-b border-gray-200 bg-white shadow-xs">
+        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 sm:px-6">
 
           <Link
             to="/"
-            className="text-2xl font-bold text-teal-700"
+            className="inline-flex min-h-9 items-center rounded-lg text-xl font-bold tracking-tight text-teal-800 sm:text-2xl"
           >
-            MuchLogic Bookstore
+            MBook
           </Link>
 
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex w-full flex-wrap items-center gap-1 sm:w-auto">
 
             {/* Public Navigation */}
             <Link
               to="/books"
-              className="text-gray-700 hover:text-teal-700"
+              className="nav-link"
             >
               Books
             </Link>
@@ -197,21 +204,21 @@ function AppContent() {
               <>
                 <Link
                   to="/cart"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   Cart
                 </Link>
 
                 <Link
                   to="/my-orders"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   My Orders
                 </Link>
 
                 <Link
                   to="/my-ebooks"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   My Ebooks
                 </Link>
@@ -223,35 +230,35 @@ function AppContent() {
               <>
                 <Link
                   to="/admin"
-                  className="font-medium text-teal-700 hover:underline"
+                  className="nav-link"
                 >
                   Dashboard
                 </Link>
 
                 <Link
                   to="/admin/books"
-                  className="font-medium text-teal-700 hover:underline"
+                  className="nav-link"
                 >
                   Manage Books
                 </Link>
 
                 <Link
                   to="/admin/orders"
-                  className="font-medium text-teal-700 hover:underline"
+                  className="nav-link"
                 >
                   Manage Orders
                 </Link>
 
                 <Link
                   to="/admin/shipments"
-                  className="font-medium text-teal-700 hover:underline"
+                  className="nav-link"
                 >
                   Manage Shipments
                 </Link>
 
                 <Link
                   to="/admin/users"
-                  className="font-medium text-teal-700 hover:underline"
+                  className="nav-link"
                 >
                   Manage Users
                 </Link>
@@ -260,12 +267,12 @@ function AppContent() {
 
             {/* Authentication Navigation */}
             {checkingUser ? (
-              <span className="text-gray-500">
+              <span className="px-2.5 text-sm text-gray-500">
                 Checking...
               </span>
             ) : user ? (
               <>
-                <span className="font-medium text-gray-700">
+                <span className="px-2.5 py-1.5 text-sm font-medium wrap-anywhere text-gray-700">
                   Hi, {user.firstName || user.email}
                 </span>
 
@@ -273,7 +280,7 @@ function AppContent() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                  className="button button-secondary ml-1 min-h-9"
                 >
                   {loggingOut
                     ? "Logging out..."
@@ -284,21 +291,21 @@ function AppContent() {
               <>
                 <Link
                   to="/cart"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   Cart
                 </Link>
 
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   Login
                 </Link>
 
                 <Link
                   to="/register"
-                  className="text-gray-700 hover:text-teal-700"
+                  className="nav-link"
                 >
                   Register
                 </Link>
@@ -310,7 +317,7 @@ function AppContent() {
         {logoutError && (
           <p
             role="alert"
-            className="pb-3 text-center text-red-600"
+            className="alert-error mx-4 mb-3 sm:mx-auto sm:w-fit"
           >
             {logoutError}
           </p>
@@ -447,9 +454,9 @@ function AppContent() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white py-6 text-center text-gray-500">
+      <footer className="border-t border-gray-200 bg-white px-4 py-5 text-center text-sm text-gray-600">
         <p>
-          © 2026 MuchLogic Bookstore. All rights reserved.
+          © 2026 MBook. All rights reserved.
         </p>
       </footer>
     </div>

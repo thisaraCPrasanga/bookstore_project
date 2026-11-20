@@ -55,27 +55,27 @@ export default function Register() {
   }
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <section className="page-shell flex max-w-6xl justify-center">
+      <div className="surface w-full max-w-md p-5 sm:p-8">
 
-        <h1 className="text-center text-3xl font-bold">
+        <h1 className="page-title text-center">
           Create Account
         </h1>
 
         <p className="mt-2 text-center text-gray-600">
-          Join MuchLogic Bookstore
+          Join MBook
         </p>
 
         {error && (
-          <p role="alert" className="mt-5 rounded-lg bg-red-50 p-3 text-red-700">
+          <p role="alert" className="alert-error mt-5">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleRegister} className="mt-8 space-y-5">
+        <form onSubmit={handleRegister} className="mt-6 space-y-4">
 
           <div>
-            <label htmlFor="firstName" className="mb-2 block font-medium">
+            <label htmlFor="firstName" className="form-label">
               First Name
             </label>
 
@@ -87,12 +87,12 @@ export default function Register() {
               autoComplete="given-name"
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="form-field w-full"
             />
           </div>
 
           <div>
-            <label htmlFor="lastName" className="mb-2 block font-medium">
+            <label htmlFor="lastName" className="form-label">
               Last Name
             </label>
 
@@ -104,12 +104,12 @@ export default function Register() {
               autoComplete="family-name"
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="form-field w-full"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block font-medium">
+            <label htmlFor="email" className="form-label">
               Email
             </label>
 
@@ -121,12 +121,12 @@ export default function Register() {
               autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="form-field w-full"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block font-medium">
+            <label htmlFor="password" className="form-label">
               Password
             </label>
 
@@ -139,12 +139,12 @@ export default function Register() {
               autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="form-field w-full"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="mb-2 block font-medium">
+            <label htmlFor="confirmPassword" className="form-label">
               Confirm Password
             </label>
 
@@ -157,14 +157,14 @@ export default function Register() {
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="form-field w-full"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+            className="button button-primary w-full"
           >
             {loading ? "Creating Account..." : "Register"}
           </button>
