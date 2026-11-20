@@ -174,7 +174,7 @@ export default function AdminUsers() {
   ).length;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="page-shell max-w-6xl">
 
       {/* Header */}
       <Link
@@ -186,7 +186,7 @@ export default function AdminUsers() {
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">
+          <h1 className="page-title">
             Manage Users
           </h1>
 
@@ -199,41 +199,41 @@ export default function AdminUsers() {
           type="button"
           onClick={handleRefresh}
           disabled={loading || savingId !== null}
-          className="rounded-lg border border-gray-300 bg-white px-5 py-3 hover:bg-gray-100 disabled:opacity-50"
+          className="button button-secondary"
         >
           Refresh
         </button>
       </div>
 
       {/* Statistics */}
-      <div className="mt-8 grid gap-5 sm:grid-cols-3">
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="surface min-w-0 p-4 sm:p-5">
           <p className="text-gray-500">
             Total Users
           </p>
 
-          <h2 className="mt-3 text-3xl font-bold">
+          <h2 className="mt-2 text-2xl font-bold tabular-nums">
             {users.length}
           </h2>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="surface min-w-0 p-4 sm:p-5">
           <p className="text-gray-500">
             Customers
           </p>
 
-          <h2 className="mt-3 text-3xl font-bold text-teal-700">
+          <h2 className="mt-2 text-2xl font-bold text-teal-800 tabular-nums">
             {totalCustomers}
           </h2>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="surface min-w-0 p-4 sm:p-5">
           <p className="text-gray-500">
             Administrators
           </p>
 
-          <h2 className="mt-3 text-3xl font-bold text-blue-700">
+          <h2 className="mt-2 text-2xl font-bold tabular-nums">
             {totalAdmins}
           </h2>
         </div>
@@ -243,7 +243,7 @@ export default function AdminUsers() {
       {message && (
         <p
           role="status"
-          className="mt-6 rounded-lg bg-green-50 p-4 text-green-700"
+          className="alert-success mt-5"
         >
           {message}
         </p>
@@ -253,17 +253,17 @@ export default function AdminUsers() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
       )}
 
       {/* Search */}
-      <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5">
+      <div className="surface mt-5 p-4 sm:p-5">
         <label
           htmlFor="user-search"
-          className="mb-2 block font-medium"
+          className="form-label"
         >
           Search Users
         </label>
@@ -276,22 +276,22 @@ export default function AdminUsers() {
             setSearch(event.target.value)
           }
           placeholder="Search by name or email..."
-          className="w-full rounded-lg border border-gray-300 px-4 py-3"
+          className="form-field w-full"
         />
       </div>
 
       {/* Users Table */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
+      <div className="surface table-scroll mt-5">
 
-        <table className="w-full text-left text-sm">
+        <table className="admin-table">
 
-          <thead className="bg-gray-100">
+          <thead className="border-b border-gray-200">
             <tr>
-              <th className="p-4">ID</th>
-              <th className="p-4">User</th>
-              <th className="p-4">Current Role</th>
-              <th className="p-4">Change Role</th>
-              <th className="p-4">Action</th>
+              <th className="px-4 py-3">ID</th>
+              <th className="px-4 py-3">User</th>
+              <th className="px-4 py-3">Current Role</th>
+              <th className="px-4 py-3">Change Role</th>
+              <th className="px-4 py-3">Action</th>
             </tr>
           </thead>
 
@@ -331,12 +331,12 @@ export default function AdminUsers() {
                     className="border-t border-gray-200"
                   >
                     {/* ID */}
-                    <td className="p-4">
+                    <td className="px-4 py-3">
                       #{user.id}
                     </td>
 
                     {/* User Information */}
-                    <td className="p-4">
+                    <td className="px-4 py-3">
                       <p className="font-semibold">
                         {user.firstName} {user.lastName}
                       </p>
@@ -359,7 +359,7 @@ export default function AdminUsers() {
                     </td>
 
                     {/* Current Role */}
-                    <td className="p-4">
+                    <td className="px-4 py-3">
                       <span
                         className={`rounded-full px-3 py-2 text-xs font-medium ${
                           user.role === "ADMIN"
@@ -372,7 +372,7 @@ export default function AdminUsers() {
                     </td>
 
                     {/* Role Selection */}
-                    <td className="p-4">
+                    <td className="px-4 py-3">
                       <select
                         aria-label={`Role for ${user.email}`}
                         value={selectedRole}
@@ -386,7 +386,7 @@ export default function AdminUsers() {
                           isCurrentUser ||
                           savingId !== null
                         }
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 disabled:opacity-50"
+                        className="form-field"
                       >
                         <option value="CUSTOMER">
                           Customer
@@ -399,7 +399,7 @@ export default function AdminUsers() {
                     </td>
 
                     {/* Save Button */}
-                    <td className="p-4">
+                    <td className="px-4 py-3">
                       {isCurrentUser ? (
                         <span className="text-xs text-gray-500">
                           Not allowed
@@ -414,7 +414,7 @@ export default function AdminUsers() {
                             !hasChanged ||
                             savingId !== null
                           }
-                          className="rounded-lg bg-teal-700 px-4 py-2 font-medium text-white hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="button button-primary whitespace-nowrap"
                         >
                           {savingId === user.id
                             ? "Saving..."
@@ -431,7 +431,7 @@ export default function AdminUsers() {
       </div>
 
       {/* Information */}
-      <div className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-5">
+      <div className="alert-warning mt-5">
         <h2 className="font-semibold text-amber-900">
           Important: Role Management
         </h2>

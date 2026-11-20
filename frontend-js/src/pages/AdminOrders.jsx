@@ -142,7 +142,7 @@ export default function AdminOrders() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="page-shell max-w-6xl">
 
       {/* Header */}
       <Link
@@ -152,7 +152,7 @@ export default function AdminOrders() {
         ← Admin Dashboard
       </Link>
 
-      <h1 className="mt-4 text-3xl font-bold">
+      <h1 className="page-title mt-4">
         Manage Orders
       </h1>
 
@@ -165,7 +165,7 @@ export default function AdminOrders() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
@@ -174,23 +174,23 @@ export default function AdminOrders() {
       {message && (
         <p
           role="status"
-          className="mt-6 rounded-lg bg-green-50 p-4 text-green-700"
+          className="alert-success mt-5"
         >
           {message}
         </p>
       )}
 
       {/* Orders Table */}
-      <div className="mt-8 overflow-x-auto rounded-xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
+      <div className="surface table-scroll mt-5">
+        <table className="admin-table">
 
-          <thead className="bg-gray-100">
+          <thead className="border-b border-gray-200">
             <tr>
-              <th className="p-4">Order Number</th>
-              <th className="p-4">Customer</th>
-              <th className="p-4">Amount</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Action</th>
+              <th className="px-4 py-3">Order Number</th>
+              <th className="px-4 py-3">Customer</th>
+              <th className="px-4 py-3">Amount</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Action</th>
             </tr>
           </thead>
 
@@ -219,7 +219,7 @@ export default function AdminOrders() {
                   key={order.id}
                   className="border-t border-gray-200"
                 >
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     <p className="font-semibold">
                       {order.orderNumber}
                     </p>
@@ -231,31 +231,31 @@ export default function AdminOrders() {
                     </p>
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     {order.customerEmail}
                   </td>
 
-                  <td className="p-4 font-medium">
+                  <td className="px-4 py-3 font-medium tabular-nums">
                     {order.currency === "LKR"
                       ? "Rs."
                       : order.currency}{" "}
                     {Number(order.totalAmount).toFixed(2)}
                   </td>
 
-                  <td className="p-4">
-                    <span className="rounded-full bg-gray-100 px-3 py-2 text-xs font-medium">
+                  <td className="px-4 py-3">
+                    <span className="status-label">
                       {order.status.replaceAll("_", " ")}
                     </span>
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     <button
                       type="button"
                       onClick={() =>
                         handleViewDetails(order.id)
                       }
                       disabled={loadingDetails || cancelling}
-                      className="font-medium text-teal-700 hover:underline disabled:opacity-40"
+                      className="button button-secondary whitespace-nowrap"
                     >
                       View Details
                     </button>
@@ -269,7 +269,7 @@ export default function AdminOrders() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-4">
+        <div className="pagination">
           <button
             type="button"
             disabled={page === 0 || loading}
@@ -277,7 +277,7 @@ export default function AdminOrders() {
               setPage((value) => value - 1);
               setSelectedOrder(null);
             }}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 disabled:opacity-40"
+            className="button button-secondary"
           >
             Previous
           </button>
@@ -293,7 +293,7 @@ export default function AdminOrders() {
               setPage((value) => value + 1);
               setSelectedOrder(null);
             }}
-            className="rounded-lg bg-teal-700 px-4 py-2 text-white disabled:opacity-40"
+            className="button button-primary"
           >
             Next
           </button>
@@ -308,11 +308,11 @@ export default function AdminOrders() {
 
       {/* Selected Order Details */}
       {selectedOrder && !loadingDetails && (
-        <div className="mt-10 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="surface mt-6 p-4 sm:p-6">
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold">
+              <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
                 {selectedOrder.orderNumber}
               </h2>
 
@@ -324,7 +324,7 @@ export default function AdminOrders() {
             <button
               type="button"
               onClick={() => setSelectedOrder(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100"
+              className="button button-secondary"
             >
               Close
             </button>
@@ -397,7 +397,7 @@ export default function AdminOrders() {
               {selectedOrder.items.map((item) => (
                 <div
                   key={item.bookId}
-                  className="flex flex-wrap justify-between gap-4 border-b border-gray-100 pb-4"
+                  className="flex flex-wrap justify-between gap-3 border-b border-gray-200 pb-3 wrap-anywhere last:border-0 last:pb-0"
                 >
                   <div>
                     <p className="font-semibold">
@@ -468,7 +468,7 @@ export default function AdminOrders() {
                 type="button"
                 onClick={handleCancelOrder}
                 disabled={cancelling}
-                className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                className="button button-danger"
               >
                 {cancelling
                   ? "Cancelling..."

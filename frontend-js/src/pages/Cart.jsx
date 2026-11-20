@@ -126,13 +126,13 @@ export default function Cart() {
     cart.items.every((item) => item.available);
 
   if (loading) {
-    return <p className="p-8">Loading cart...</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Loading cart...</p>;
   }
 
   if (loginRequired) {
     return (
-      <section className="mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-3xl font-bold">Shopping Cart</h1>
+      <section className="page-shell max-w-4xl">
+        <h1 className="page-title">Shopping Cart</h1>
 
         <p className="mt-6">
           Please login to view your cart.
@@ -140,7 +140,7 @@ export default function Cart() {
 
         <Link
           to="/login"
-          className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+          className="button button-primary mt-5"
         >
           Login
         </Link>
@@ -149,15 +149,15 @@ export default function Cart() {
   }
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900">
+    <section className="page-shell max-w-4xl">
+      <h1 className="page-title">
         Shopping Cart
       </h1>
 
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
@@ -166,14 +166,14 @@ export default function Cart() {
       {!cart ? (
         <p className="mt-6">Cart is unavailable.</p>
       ) : cart.items.length === 0 ? (
-        <div className="mt-8 rounded-xl bg-white p-8 text-center">
+        <div className="surface mt-5 p-6 text-center sm:p-8">
           <p className="text-gray-600">
             Your cart is empty.
           </p>
 
           <Link
             to="/books"
-            className="mt-5 inline-block rounded-lg bg-teal-700 px-6 py-3 text-white"
+            className="button button-primary mt-5"
           >
             Browse Books
           </Link>
@@ -181,11 +181,11 @@ export default function Cart() {
       ) : (
         <>
           {/* Cart Items */}
-          <div className="mt-8 space-y-4">
+          <div className="mt-5 space-y-4">
             {cart.items.map((item) => (
               <div
                 key={item.bookId}
-                className="rounded-xl border border-gray-200 bg-white p-6"
+                className="surface min-w-0 p-4 wrap-anywhere sm:p-6"
               >
                 <Link
                   to={`/books/${item.bookId}`}
@@ -211,7 +211,7 @@ export default function Cart() {
                 )}
 
                 {/* Quantity Controls */}
-                <div className="mt-5 flex flex-wrap items-center gap-4">
+                <div className="mt-4 flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
                     disabled={updating || item.quantity <= 1}
@@ -221,7 +221,7 @@ export default function Cart() {
                         item.quantity - 1
                       )
                     }
-                    className="rounded-lg border border-gray-300 px-4 py-2 disabled:opacity-40"
+                    className="button button-secondary max-sm:min-w-11"
                   >
                     -
                   </button>
@@ -244,7 +244,7 @@ export default function Cart() {
                         item.quantity + 1
                       )
                     }
-                    className="rounded-lg border border-gray-300 px-4 py-2 disabled:opacity-40"
+                    className="button button-secondary max-sm:min-w-11"
                   >
                     +
                   </button>
@@ -253,7 +253,7 @@ export default function Cart() {
                     type="button"
                     disabled={updating}
                     onClick={() => removeItem(item.bookId)}
-                    className="ml-auto text-red-600 hover:underline disabled:opacity-40"
+                    className="button button-danger ml-auto"
                   >
                     Remove
                   </button>
@@ -263,17 +263,17 @@ export default function Cart() {
           </div>
 
           {/* Order Summary */}
-          <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+          <div className="surface mt-5 p-4 sm:p-6">
             <h2 className="text-xl font-bold">
               Order Summary
             </h2>
 
-            <div className="mt-5 flex justify-between">
+            <div className="mt-4 flex flex-wrap justify-between gap-x-3">
               <span>Total Items</span>
               <span>{cart.totalQuantity}</span>
             </div>
 
-            <div className="mt-4 flex justify-between text-xl font-bold">
+            <div className="mt-4 flex flex-wrap justify-between gap-x-3 border-t border-gray-200 pt-4 text-lg font-bold">
               <span>Subtotal</span>
               <span>
                 Rs. {Number(cart.subtotal).toFixed(2)}
@@ -284,7 +284,7 @@ export default function Cart() {
             {canCheckout && !updating ? (
               <Link
                 to="/checkout"
-                className="mt-6 block rounded-lg bg-teal-700 px-6 py-3 text-center font-semibold text-white hover:bg-teal-800"
+                className="button button-primary mt-6 w-full"
               >
                 Proceed to Checkout
               </Link>
@@ -292,7 +292,7 @@ export default function Cart() {
               <button
                 type="button"
                 disabled
-                className="mt-6 w-full rounded-lg bg-gray-400 px-6 py-3 font-semibold text-white"
+                className="button button-secondary mt-6 w-full"
               >
                 Proceed to Checkout
               </button>
@@ -308,7 +308,7 @@ export default function Cart() {
               type="button"
               disabled={updating}
               onClick={clearCart}
-              className="mt-4 rounded-lg border border-red-300 px-5 py-3 text-red-600 hover:bg-red-50 disabled:opacity-40"
+              className="button button-danger mt-4"
             >
               Clear Cart
             </button>

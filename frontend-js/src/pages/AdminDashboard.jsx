@@ -94,9 +94,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-5 grid gap-3 max-[360px]:grid-cols-1 min-[360px]:max-sm:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
 
-        <div className="surface min-w-0 p-4 sm:p-5">
+        <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
           <p className="text-sm font-medium text-gray-600">Total Orders</p>
 
           <h2 className="mt-2 text-2xl font-bold tabular-nums">
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           </h2>
         </div>
 
-        <div className="surface min-w-0 p-4 sm:p-5">
+        <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
           <p className="text-sm font-medium text-gray-600">Paid Orders</p>
 
           <h2 className="mt-2 text-2xl font-bold text-teal-800 tabular-nums">
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
           </h2>
         </div>
 
-        <div className="surface min-w-0 p-4 sm:p-5">
+        <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
           <p className="text-sm font-medium text-gray-600">Total Sales</p>
 
           <h2 className="mt-2 text-2xl font-bold wrap-anywhere text-teal-800 tabular-nums">
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
           </h2>
         </div>
 
-        <div className="surface min-w-0 p-4 sm:p-5">
+        <div className="surface min-w-0 p-4 max-sm:p-3 sm:p-5">
           <p className="text-sm font-medium text-gray-600">Low Stock Books</p>
 
           <h2 className="mt-2 text-2xl font-bold text-red-700 tabular-nums">

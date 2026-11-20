@@ -162,7 +162,7 @@ export default function AdminShipments() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
+    <section className="page-shell max-w-6xl">
 
       {/* Header */}
       <Link
@@ -172,7 +172,7 @@ export default function AdminShipments() {
         ← Admin Dashboard
       </Link>
 
-      <h1 className="mt-4 text-3xl font-bold">
+      <h1 className="page-title mt-4">
         Manage Shipments
       </h1>
 
@@ -181,10 +181,10 @@ export default function AdminShipments() {
       </p>
 
       {/* Status Filter */}
-      <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5">
+      <div className="surface mt-5 p-4 sm:p-5">
         <label
           htmlFor="shipment-status-filter"
-          className="mb-2 block font-medium"
+          className="form-label"
         >
           Filter by Status
         </label>
@@ -193,7 +193,7 @@ export default function AdminShipments() {
           id="shipment-status-filter"
           value={statusFilter}
           onChange={changeFilter}
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 sm:max-w-xs"
+          className="form-field w-full sm:max-w-xs"
         >
           <option value="">All Shipments</option>
           <option value="PENDING">Pending</option>
@@ -206,7 +206,7 @@ export default function AdminShipments() {
       {error && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-red-50 p-4 text-red-700"
+          className="alert-error mt-5"
         >
           {error}
         </p>
@@ -215,23 +215,23 @@ export default function AdminShipments() {
       {message && (
         <p
           role="status"
-          className="mt-6 rounded-lg bg-green-50 p-4 text-green-700"
+          className="alert-success mt-5"
         >
           {message}
         </p>
       )}
 
       {/* Shipment Table */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
+      <div className="surface table-scroll mt-5">
+        <table className="admin-table">
 
-          <thead className="bg-gray-100">
+          <thead className="border-b border-gray-200">
             <tr>
-              <th className="p-4">Shipment ID</th>
-              <th className="p-4">Order ID</th>
-              <th className="p-4">Customer</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Action</th>
+              <th className="px-4 py-3">Shipment ID</th>
+              <th className="px-4 py-3">Order ID</th>
+              <th className="px-4 py-3">Customer</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Action</th>
             </tr>
           </thead>
 
@@ -260,29 +260,29 @@ export default function AdminShipments() {
                   key={shipment.id}
                   className="border-t border-gray-200"
                 >
-                  <td className="p-4 font-semibold">
+                  <td className="px-4 py-3 font-semibold">
                     #{shipment.id}
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     #{shipment.orderId}
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     {shipment.address?.fullName ?? "N/A"}
                   </td>
 
-                  <td className="p-4">
-                    <span className="rounded-full bg-gray-100 px-3 py-2 text-xs font-medium">
+                  <td className="px-4 py-3">
+                    <span className="status-label">
                       {shipment.status}
                     </span>
                   </td>
 
-                  <td className="p-4">
+                  <td className="px-4 py-3">
                     <button
                       type="button"
                       onClick={() => handleSelect(shipment)}
-                      className="font-medium text-teal-700 hover:underline"
+                      className="button button-secondary whitespace-nowrap"
                     >
                       Manage
                     </button>
@@ -296,12 +296,12 @@ export default function AdminShipments() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-4">
+        <div className="pagination">
           <button
             type="button"
             disabled={page === 0 || loading}
             onClick={() => changePage(page - 1)}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 disabled:opacity-40"
+            className="button button-secondary"
           >
             Previous
           </button>
@@ -314,7 +314,7 @@ export default function AdminShipments() {
             type="button"
             disabled={page >= totalPages - 1 || loading}
             onClick={() => changePage(page + 1)}
-            className="rounded-lg bg-teal-700 px-4 py-2 text-white disabled:opacity-40"
+            className="button button-primary"
           >
             Next
           </button>
@@ -323,10 +323,10 @@ export default function AdminShipments() {
 
       {/* Selected Shipment */}
       {selectedShipment && (
-        <div className="mt-10 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="surface mt-6 p-4 sm:p-6">
 
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
               Shipment #{selectedShipment.id}
             </h2>
 
@@ -334,7 +334,7 @@ export default function AdminShipments() {
               type="button"
               disabled={updating}
               onClick={() => setSelectedShipment(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100 disabled:opacity-50"
+              className="button button-secondary"
             >
               Close
             </button>
@@ -436,7 +436,7 @@ export default function AdminShipments() {
                 }
                 maxLength={50}
                 placeholder="Enter tracking number"
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 sm:max-w-md"
+                className="form-field mt-2 w-full sm:max-w-md"
               />
 
               <div className="mt-5">
@@ -444,7 +444,7 @@ export default function AdminShipments() {
                   type="button"
                   disabled={updating}
                   onClick={() => handleUpdate("SHIPPED")}
-                  className="rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                  className="button button-primary"
                 >
                   {updating
                     ? "Updating..."
@@ -466,7 +466,7 @@ export default function AdminShipments() {
                 type="button"
                 disabled={updating}
                 onClick={() => handleUpdate("DELIVERED")}
-                className="rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                className="button button-primary"
               >
                 {updating
                   ? "Updating..."
@@ -477,7 +477,7 @@ export default function AdminShipments() {
 
           {/* Completed Shipment */}
           {selectedShipment.status === "DELIVERED" && (
-            <div className="mt-8 rounded-lg bg-green-50 p-5 text-green-700">
+            <div className="alert-success mt-6">
               This shipment has been delivered successfully.
             </div>
           )}

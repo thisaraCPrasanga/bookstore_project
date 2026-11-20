@@ -91,13 +91,13 @@ export default function OrderDetails() {
   }
 
   if (loading) {
-    return <p className="p-8">Loading order details...</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Loading order details...</p>;
   }
 
   if (error) {
     return (
-      <section className="mx-auto max-w-4xl px-6 py-12">
-        <p role="alert" className="text-red-600">
+      <section className="page-shell max-w-4xl">
+        <p role="alert" className="alert-error">
           {error}
         </p>
 
@@ -112,11 +112,11 @@ export default function OrderDetails() {
   }
 
   if (!order) {
-    return <p className="p-8">Order not found.</p>;
+    return <p className="page-shell max-w-5xl text-sm text-gray-600">Order not found.</p>;
   }
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-12">
+    <section className="page-shell max-w-4xl">
       <Link
         to="/my-orders"
         className="text-teal-700 hover:underline"
@@ -124,12 +124,12 @@ export default function OrderDetails() {
         ← Back to My Orders
       </Link>
 
-      <h1 className="mt-6 text-3xl font-bold">
+      <h1 className="page-title mt-4">
         Order Details
       </h1>
 
       {/* Order Information */}
-      <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+      <div className="surface mt-5 p-4 sm:p-6">
         <h2 className="text-xl font-bold">
           {order.orderNumber}
         </h2>
@@ -151,7 +151,7 @@ export default function OrderDetails() {
       </div>
 
       {/* Ordered Books */}
-      <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
+      <div className="surface mt-4 p-4 sm:p-6">
         <h2 className="text-xl font-bold">
           Ordered Books
         </h2>
@@ -160,7 +160,7 @@ export default function OrderDetails() {
           {order.items.map((item) => (
             <div
               key={item.bookId}
-              className="border-b border-gray-200 pb-5"
+              className="border-b border-gray-200 pb-4 wrap-anywhere last:border-0 last:pb-0"
             >
               <Link
                 to={`/books/${item.bookId}`}
@@ -198,7 +198,7 @@ export default function OrderDetails() {
 
       {/* Delivery Details */}
       {order.address && (
-        <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
+        <div className="surface mt-4 p-4 sm:p-6">
           <h2 className="text-xl font-bold">
             Delivery Details
           </h2>
@@ -226,26 +226,26 @@ export default function OrderDetails() {
       )}
 
       {/* Payment Summary */}
-      <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
+      <div className="surface mt-4 p-4 sm:p-6">
         <h2 className="text-xl font-bold">
           Payment Summary
         </h2>
 
-        <div className="mt-5 flex justify-between">
+        <div className="mt-4 flex flex-wrap justify-between gap-x-3">
           <span>Subtotal</span>
           <span>
             Rs. {Number(order.subtotal).toFixed(2)}
           </span>
         </div>
 
-        <div className="mt-4 flex justify-between">
+        <div className="mt-3 flex flex-wrap justify-between gap-x-3">
           <span>Delivery Fee</span>
           <span>
             Rs. {Number(order.deliveryFee).toFixed(2)}
           </span>
         </div>
 
-        <div className="mt-5 flex justify-between border-t border-gray-200 pt-5 text-xl font-bold">
+        <div className="mt-4 flex flex-wrap justify-between gap-x-3 border-t border-gray-200 pt-4 text-lg font-bold">
           <span>Total</span>
           <span className="text-teal-700">
             Rs. {Number(order.totalAmount).toFixed(2)}
@@ -254,7 +254,7 @@ export default function OrderDetails() {
 
         {/* Payment Status */}
         {order.status === "PAID" && (
-          <p className="mt-6 font-medium text-green-700">
+          <p className="alert-success mt-5">
             Payment confirmed.
           </p>
         )}
@@ -266,7 +266,7 @@ export default function OrderDetails() {
             </p>
 
             {paymentError && (
-              <p role="alert" className="mt-4 text-red-600">
+              <p role="alert" className="alert-error mt-4">
                 {paymentError}
               </p>
             )}
@@ -276,7 +276,7 @@ export default function OrderDetails() {
                 type="button"
                 onClick={handlePayNow}
                 disabled={preparingPayment}
-                className="mt-5 w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                className="button button-primary mt-5 w-full"
               >
                 {preparingPayment
                   ? "Preparing Payment..."
@@ -309,7 +309,7 @@ export default function OrderDetails() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-teal-700 px-6 py-3 font-semibold text-white hover:bg-teal-800"
+                  className="button button-primary w-full"
                 >
                   Continue to PayHere
                 </button>

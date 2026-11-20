@@ -180,7 +180,7 @@ function AppContent() {
 
       {/* Navbar */}
       <header className="border-b border-gray-200 bg-white shadow-xs">
-        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 sm:px-6">
+        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 max-sm:py-2 sm:px-6">
 
           <Link
             to="/"
@@ -189,7 +189,7 @@ function AppContent() {
             MBook
           </Link>
 
-          <div className="flex w-full flex-wrap items-center gap-1 sm:w-auto">
+          <div className="flex w-full flex-wrap items-center gap-1 max-sm:gap-y-0 max-lg:min-w-0 max-lg:max-w-full sm:w-auto">
 
             {/* Public Navigation */}
             <Link
@@ -280,7 +280,7 @@ function AppContent() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="button button-secondary ml-1 min-h-9"
+                  className="button button-secondary ml-1 min-h-9 max-sm:min-h-11"
                 >
                   {loggingOut
                     ? "Logging out..."

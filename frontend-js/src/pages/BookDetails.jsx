@@ -115,10 +115,10 @@ export default function BookDetails() {
         ← Back to Books
       </Link>
 
-      <div className="mt-4 grid items-start gap-4 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-6">
+      <div className="mt-4 grid items-start gap-4 max-md:grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-6">
 
         {/* Book Cover */}
-        <div className="surface book-cover h-72 p-5 sm:h-104 sm:p-7">
+        <div className="surface book-cover h-72 p-5 max-sm:h-64 max-sm:p-4 sm:h-104 sm:p-7">
           {book.coverImageUrl && (
             <img src={book.coverImageUrl} alt="" />
           )}
