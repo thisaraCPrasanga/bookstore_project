@@ -1,19 +1,28 @@
 
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import api from "../services/api";
 
 export default function BookDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [adding, setAdding] = useState(false);
+  const [cartError, setCartError] = useState("");
+
+  // Load book details
   useEffect(() => {
     let cancelled = false;
 
     async function loadBook() {
+      setLoading(true);
+      setError("");
+      setBook(null);
+
       try {
         const response = await api.get(`/books/${id}`);
 
@@ -40,21 +49,69 @@ export default function BookDetails() {
     };
   }, [id]);
 
+  // Add book to cart
+  async function handleAddToCart() {
+    if (!book || adding) {
+      return;
+    }
+
+    setAdding(true);
+    setCartError("");
+
+    try {
+      // Get CSRF cookie
+      await api.get("/auth/csrf");
+
+      // Add one book to the cart
+      await api.post("/cart/items", {
+        bookId: book.id,
+        quantity: 1,
+      });
+
+      // Navigate to cart page
+      navigate("/cart");
+
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+
+      if (error.response?.status === 401) {
+        setCartError("Please login before adding books to your cart.");
+      } else {
+        setCartError(
+          error.response?.data?.detail ||
+          "Failed to add book to cart."
+        );
+      }
+    } finally {
+      setAdding(false);
+    }
+  }
+
   if (loading) {
     return <p className="p-8">Loading book details...</p>;
   }
 
   if (error) {
-    return <p role="alert" className="p-8 text-red-600">{error}</p>;
+    return (
+      <p role="alert" className="p-8 text-red-600">
+        {error}
+      </p>
+    );
   }
 
   if (!book) {
     return <p className="p-8">Book not found.</p>;
   }
 
+  const outOfStock =
+    book.format === "PHYSICAL" && book.stock <= 0;
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
-      <Link to="/" className="text-teal-700 hover:underline">
+      <Link
+        to="/books"
+        className="text-teal-700 hover:underline"
+      >
         ← Back to Books
       </Link>
 
@@ -69,7 +126,9 @@ export default function BookDetails() {
               className="max-h-96 object-contain"
             />
           ) : (
-            <p className="text-gray-500">No Cover Available</p>
+            <p className="text-gray-500">
+              No Cover Available
+            </p>
           )}
         </div>
 
@@ -115,10 +174,46 @@ export default function BookDetails() {
 
           {book.publishedYear != null && (
             <p className="mt-2">
-              <strong>Published Year:</strong> {book.publishedYear}
+              <strong>Published Year:</strong>{" "}
+              {book.publishedYear}
             </p>
           )}
 
+          {/* Add to Cart */}
+          <div className="mt-8">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={adding || outOfStock}
+              className="rounded-lg bg-teal-700 px-8 py-3 font-semibold text-white hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {outOfStock
+                ? "Out of Stock"
+                : adding
+                ? "Adding..."
+                : "Add to Cart"}
+            </button>
+
+            {cartError && (
+              <p
+                role="alert"
+                className="mt-4 text-red-600"
+              >
+                {cartError}
+              </p>
+            )}
+
+            {cartError.includes("Please login") && (
+              <Link
+                to="/login"
+                className="mt-3 inline-block text-teal-700 hover:underline"
+              >
+                Go to Login
+              </Link>
+            )}
+          </div>
+
+          {/* Description */}
           {book.description && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold">

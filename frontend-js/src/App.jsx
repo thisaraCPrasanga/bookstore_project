@@ -1,10 +1,27 @@
 
-import { BrowserRouter, Routes, Route, Link } from "react-router";
+import { useEffect, useState } from "react";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router";
+
+import api from "./services/api";
 
 import BookList from "./pages/BookList";
 import BookDetails from "./pages/BookDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import PaymentResult from "./pages/PaymentResult";
+import MyOrders from "./pages/MyOrders";
+import OrderDetails from "./pages/OrderDetails";
+import MyEbooks from "./pages/MyEbooks";
 
 function HomePage() {
   return (
@@ -28,7 +45,10 @@ function HomePage() {
       </section>
 
       {/* Book Catalog */}
-      <section id="books" className="mx-auto max-w-6xl px-6 py-12">
+      <section
+        id="books"
+        className="mx-auto max-w-6xl px-6 py-12"
+      >
         <h2 className="text-2xl font-bold">
           Our Books
         </h2>
@@ -39,62 +59,244 @@ function HomePage() {
   );
 }
 
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [user, setUser] = useState(null);
+  const [checkingUser, setCheckingUser] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+
+  // Check login status
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkLoginStatus() {
+      setCheckingUser(true);
+
+      try {
+        const response = await api.get("/users/me");
+
+        if (!cancelled) {
+          setUser(response.data);
+        }
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingUser(false);
+        }
+      }
+    }
+
+    checkLoginStatus();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
+
+  // Logout
+  async function handleLogout() {
+    setLoggingOut(true);
+    setLogoutError("");
+
+    try {
+      await api.get("/auth/csrf");
+
+      await api.post("/users/logout", {});
+
+      setUser(null);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setLogoutError("Logout failed. Please try again.");
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* Navbar */}
+      <header className="border-b border-gray-200 bg-white">
+        <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+
+          <Link
+            to="/"
+            className="text-2xl font-bold text-teal-700"
+          >
+            MuchLogic Bookstore
+          </Link>
+
+          <div className="flex flex-wrap items-center gap-5">
+            <Link
+              to="/books"
+              className="text-gray-700 hover:text-teal-700"
+            >
+              Books
+            </Link>
+
+            <Link
+              to="/cart"
+              className="text-gray-700 hover:text-teal-700"
+            >
+              Cart
+            </Link>
+
+            {/* Customer Links */}
+            {user?.role === "CUSTOMER" && (
+              <>
+                <Link
+                  to="/my-orders"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  My Orders
+                </Link>
+
+                <Link
+                  to="/my-ebooks"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  My Ebooks
+                </Link>
+              </>
+            )}
+
+            {checkingUser ? (
+              <span className="text-gray-500">
+                Checking...
+              </span>
+            ) : user ? (
+              <>
+                <span className="font-medium text-gray-700">
+                  Hi, {user.firstName || user.email}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {loggingOut ? "Logging out..." : "Logout"}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/register"
+                  className="text-gray-700 hover:text-teal-700"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+        </nav>
+
+        {logoutError && (
+          <p
+            role="alert"
+            className="pb-3 text-center text-red-600"
+          >
+            {logoutError}
+          </p>
+        )}
+      </header>
+
+      {/* Pages */}
+      <main className="flex-1">
+        <Routes>
+          <Route
+            path="/"
+            element={<HomePage />}
+          />
+
+          <Route
+            path="/books"
+            element={<HomePage />}
+          />
+
+          <Route
+            path="/books/:id"
+            element={<BookDetails />}
+          />
+
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
+          <Route
+            path="/cart"
+            element={<Cart />}
+          />
+
+          <Route
+            path="/checkout"
+            element={<Checkout />}
+          />
+
+          {/* Payment Pages */}
+          <Route
+            path="/payment/return"
+            element={<PaymentResult />}
+          />
+
+          <Route
+            path="/payment/cancel"
+            element={<PaymentResult />}
+          />
+
+          {/* Orders */}
+          <Route
+            path="/my-orders"
+            element={<MyOrders />}
+          />
+
+          <Route
+            path="/orders/:id"
+            element={<OrderDetails />}
+          />
+
+          {/* Ebook Downloads */}
+          <Route
+            path="/my-ebooks"
+            element={<MyEbooks />}
+          />
+        </Routes>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white py-6 text-center text-gray-500">
+        <p>
+          © 2026 MuchLogic Bookstore. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen flex-col bg-gray-50">
-
-        {/* Navbar */}
-        <header className="border-b border-gray-200 bg-white">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-
-            <Link to="/" className="text-2xl font-bold text-teal-700">
-              MuchLogic Bookstore
-            </Link>
-
-            <div className="flex gap-6">
-              <Link
-                to="/books"
-                className="text-gray-700 hover:text-teal-700"
-              >
-                Books
-              </Link>
-
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-teal-700"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/register"
-                className="text-gray-700 hover:text-teal-700"
-              >
-                Register
-              </Link>
-            </div>
-
-          </nav>
-        </header>
-
-        {/* Pages */}
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/books" element={<HomePage />} />
-            <Route path="/books/:id" element={<BookDetails />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-gray-200 bg-white py-6 text-center text-gray-500">
-          <p>© 2026 MuchLogic Bookstore. All rights reserved.</p>
-        </footer>
-
-      </div>
+      <AppContent />
     </BrowserRouter>
   );
 }

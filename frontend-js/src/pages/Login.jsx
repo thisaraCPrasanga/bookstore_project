@@ -18,10 +18,8 @@ export default function Login() {
     setError("");
 
     try {
-      // Get CSRF cookie before login
       await api.get("/auth/csrf");
 
-      // Send login credentials to Spring Boot
       const response = await api.post("/users/login", {
         email,
         password,
@@ -29,7 +27,6 @@ export default function Login() {
 
       console.log("Login successful:", response.data.email);
 
-      // Go to home page
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
