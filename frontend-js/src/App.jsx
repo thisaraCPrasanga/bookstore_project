@@ -538,10 +538,28 @@ function AppContent() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white px-4 py-5 text-center text-sm text-gray-600">
-        <p>
-          © 2026 MBook. All rights reserved.
-        </p>
+      <footer className="border-t border-gray-200 bg-white text-sm text-gray-600">
+        <div className="page-shell flex max-w-6xl flex-col items-center gap-3 py-4 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div className="space-y-1">
+            <p className="text-base font-bold tracking-tight text-teal-800">MBook</p>
+            <p>© {new Date().getFullYear()} MBook. All rights reserved.</p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-end">
+            <p>Developed by Thisara C. Prasanga</p>
+            <a
+              href="https://www.linkedin.com/in/thisara-prasanga-55bb77321"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-sm font-medium text-teal-700 hover:text-teal-800 hover:underline sm:min-h-9"
+            >
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="size-4 shrink-0 fill-current">
+                <path d="M20.45 20.45H16.9v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12Zm1.78 13.02H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
+              </svg>
+              LinkedIn<span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
   );
