@@ -255,6 +255,10 @@ function AppContent() {
                   to="/my-orders"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <rect x="5" y="3" width="14" height="18" rx="2" />
+                    <path d="M9 8h6m-6 4h6m-6 4h4" />
+                  </svg>
                   My Orders
                 </Link>
 
@@ -262,6 +266,10 @@ function AppContent() {
                   to="/my-ebooks"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <rect x="5" y="3" width="14" height="18" rx="2" />
+                    <path d="M9 7h6m-6 4h6m-3 6h.01" />
+                  </svg>
                   My Ebooks
                 </Link>
               </>
@@ -274,6 +282,9 @@ function AppContent() {
                   to="/admin"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" />
+                  </svg>
                   Dashboard
                 </Link>
 
@@ -281,6 +292,9 @@ function AppContent() {
                   to="/admin/books"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M4 4h4v16H4zM8 4h4v16H8zM14 5l4-1 4 15-4 1z" />
+                  </svg>
                   Manage Books
                 </Link>
 
@@ -288,6 +302,10 @@ function AppContent() {
                   to="/admin/orders"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M9 5H6a1 1 0 0 0-1 1v14h14V6a1 1 0 0 0-1-1h-3m-6 9 2 2 4-4" />
+                    <rect x="9" y="3" width="6" height="4" rx="1" />
+                  </svg>
                   Manage Orders
                 </Link>
 
@@ -295,6 +313,11 @@ function AppContent() {
                   to="/admin/shipments"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <path d="M4 16H3V6h11v10H8m6-7h4l3 4v3h-2m-4 0h-1" />
+                    <circle cx="6" cy="16" r="2" />
+                    <circle cx="17" cy="16" r="2" />
+                  </svg>
                   Manage Shipments
                 </Link>
 
@@ -302,6 +325,10 @@ function AppContent() {
                   to="/admin/users"
                   className="nav-link"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon">
+                    <circle cx="9" cy="8" r="3" />
+                    <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m2-14a3 3 0 0 1 0 6m.5 2a4 4 0 0 1 3.5 4v2" />
+                  </svg>
                   Manage Users
                 </Link>
               </>
@@ -322,8 +349,11 @@ function AppContent() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="button button-secondary ml-1 min-h-9 max-md:ml-0 max-md:min-h-11 max-md:justify-start max-md:px-3"
+                  className="button button-secondary ml-1 min-h-9 gap-1.5 max-md:ml-0 max-md:min-h-11 max-md:justify-start max-md:px-3"
                 >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon text-teal-700">
+                    <path d="M10 4H5v16h5m0-8h11m-4-4 4 4-4 4" />
+                  </svg>
                   {loggingOut
                     ? "Logging out..."
                     : "Logout"}
