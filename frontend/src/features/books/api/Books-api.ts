@@ -1,19 +1,26 @@
 import { apiClient } from "../../../lib/api-client";
-import type { Book } from "./Book"
+import type { Book } from "./Book";
 
 export interface BookPage {
-  content: Book[],
+  content: Book[];
   page: {
-    size: number,
-    number: number,
-    totalElements: number,
+    size: number;
+    number: number;
+    totalElements: number;
     totalPages: number;
   };
 }
 
 
-export async function getBooks(title?: string, page:number = 0,author?:string, genre?:string): Promise<BookPage> {
+export async function getBooks(
+  title?: string,
+  page = 0,
+  author?: string,
+  genre?: string,
+  signal?: AbortSignal,
+): Promise<BookPage> {
   const response = await apiClient.get<BookPage>("/books", {
+    signal,
     params: {
       title,
       page,
@@ -26,8 +33,8 @@ export async function getBooks(title?: string, page:number = 0,author?:string, g
   return response.data;
 }
 
-export async function getBookById(id: string): Promise<Book> {
-  const response = await apiClient.get<Book>(`/books/${id}`);
+export async function getBookById(id: string, signal?: AbortSignal): Promise<Book> {
+  const response = await apiClient.get<Book>(`/books/${id}`, { signal });
 
   return response.data;
 }

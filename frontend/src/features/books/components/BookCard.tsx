@@ -1,5 +1,8 @@
-import type { Book } from "../api/Book";
 import { Link } from "react-router";
+import type { Book } from "../api/Book";
+import { formatBookPrice } from "../book-display";
+import BookAvailability from "./BookAvailability";
+import BookCover from "./BookCover";
 
 interface BookCardProps {
   book: Book;
@@ -7,52 +10,29 @@ interface BookCardProps {
 
 export default function BookCard({ book }: BookCardProps) {
   return (
-    <li className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold leading-snug text-gray-700">{book.title}</h2>
-      {book.coverImageUrl ? (
-  <img
-    src={book.coverImageUrl}
-    alt={`${book.title} cover`}
-    className="mx-auto mb-4 h-48 w-32 rounded object-contain"
-  />
-) : (
-  <div className="mx-auto mb-4 flex h-48 w-32 items-center justify-center rounded bg-gray-100 text-sm text-gray-500">
-    No cover available
-  </div>
-)}
-      <p className="text-gray-600 text-sm mt-1">{book.author}</p>
-      <p className="mt-2 font-semibold">
-  {new Intl.NumberFormat("en-LK", {
-    style: "currency",
-    currency: "LKR",
-  }).format(book.price)}
-</p>
+    <li className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+      <BookCover book={book} className="h-52 px-5 py-6 sm:h-56" />
 
-<p className="mt-2">
-  <span className="inline-block rounded-full bg-teal-100 px-3 py-1 text-xs font-medium text-teal-900">
-    {book.format === "EBOOK" ? "Ebook" : "Printed book"}
-  </span>
-</p>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <BookAvailability format={book.format} stock={book.stock} />
+        <h3 className="mt-3 font-serif text-xl font-semibold leading-tight wrap-anywhere text-stone-950">
+          {book.title}
+        </h3>
+        <p className="mt-1 text-sm wrap-anywhere text-stone-600">{book.author}</p>
 
-{book.format === "PHYSICAL" && (
-        <p
-    className={`mt-2 text-sm ${
-      book.stock !== null && book.stock > 0
-        ? "text-green-700"
-        : "text-red-600"
-    }`}
-  >
-    {book.stock !== null && book.stock > 0
-      ? `In stock: ${book.stock}`
-      : "Out of stock"}
-  </p>
-      )}
-      <Link
-  to={`/books/${book.id}`}
-  className="mt-4 inline-block rounded-lg border border-teal-700 px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-50"
->
-  View details
-</Link>
+        <div className="mt-auto pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-stone-100 pt-3">
+            <p className="font-semibold text-stone-950">{formatBookPrice(book.price)}</p>
+            <Link
+              to={`/books/${book.id}`}
+              aria-label={`View details for ${book.title}`}
+              className="inline-flex min-h-10 items-center gap-2 rounded px-1 text-sm font-semibold text-teal-800 hover:text-teal-950 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            >
+              View details <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </div>
+      </div>
     </li>
   );
 }
