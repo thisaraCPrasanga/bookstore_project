@@ -156,8 +156,12 @@ export default function BookList() {
         <div className="flex flex-wrap gap-2 max-sm:grid max-sm:grid-cols-2 max-sm:*:px-2 sm:col-span-3 lg:col-span-1">
           <button
             type="submit"
-            className="button button-primary"
+            className="button button-primary gap-1.5 max-sm:gap-1"
           >
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="line-icon max-sm:size-3.5">
+              <circle cx="10.5" cy="10.5" r="6" />
+              <path d="m15 15 5 5" />
+            </svg>
             Search Books
           </button>
 
